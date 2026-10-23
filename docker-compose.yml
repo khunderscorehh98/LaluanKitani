@@ -6,10 +6,13 @@ services:
   db:
     image: postgis/postgis:17-3.5
     restart: unless-stopped
+    # The database password comes from the git-ignored .env next to this file
+    # (copy .env.example). Compose stops with an error if .env is missing.
+    env_file:
+      - path: .env
+        required: true
     environment:
       POSTGRES_USER: laluan
-      # Set in the git-ignored .env next to this file (copy .env.example)
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy .env.example)}
       POSTGRES_DB: laluankitani
     ports:
       # Reachable from this machine only, not from the local network
