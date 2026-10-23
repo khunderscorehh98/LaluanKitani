@@ -16,7 +16,7 @@
 
 Laluan Kitani ("our route") is a navigation app built around how Brunei actually works: school-run peaks, Friday prayer closures, flash floods, and the place names Bruneians really use. Drivers' own reports improve it every day.
 
-> **Status: pre-development.** Product design, brand and screen designs are done. No code has been written yet. This README describes what we are building.
+> **Status: early development.** Product design, brand and screen designs are done. The first API slice is built (places, search, reports, Peak Spots, closures). The mobile app, admin dashboard, website and routing are not built yet.
 
 ## Why another navigation app?
 
@@ -121,8 +121,36 @@ Admin data is entered from local knowledge and observation, never copied from Go
 
 - [ ] Expo + MapLibre showing a Brunei PMTiles map
 - [ ] GraphHopper with Brunei OSM data and a custom model that avoids an area
-- [ ] PostGIS schema for places, reports and Peak Spots
-- [ ] Node API connecting all three
+- [x] PostGIS schema for places, reports and Peak Spots
+- [ ] Node API connecting all three. Database endpoints are done; the map tiles and GraphHopper connection are still to come.
+
+## Repository layout
+
+```
+apps/
+  api/              Node.js + Express API (see apps/api/README.md)
+assets/
+  laluan-kitani/    Brand kit: logos, app icons, report badges, design tokens, brand book
+  polaris/          Developer credit: Polaris Digital Solution logos
+infra/
+  db/init/          One-off database setup for local Docker
+docker-compose.yml  Local PostGIS (port 5433)
+```
+
+## Getting started
+
+Requires Node.js 22.9+ and Docker.
+
+```bash
+cp .env.example .env              # set POSTGRES_PASSWORD (your own choice)
+docker compose up -d              # PostGIS on localhost:5433
+cd apps/api
+cp .env.example .env              # set PGPASSWORD to the same value
+npm install
+npm run db:migrate && npm run db:seed
+npm run dev                       # http://localhost:4000/health
+npm test                          # 41 tests against a separate test database
+```
 
 ## Brand
 

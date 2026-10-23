@@ -1,0 +1,30 @@
+# Local development services for Laluan Kitani.
+# Start with: docker compose up -d
+name: laluankitani
+
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: laluan
+      # Set in the git-ignored .env next to this file (copy .env.example)
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy .env.example)}
+      POSTGRES_DB: laluankitani
+    ports:
+      # Reachable from this machine only, not from the local network
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Runs once, when the volume is first created
+      - ./infra/db/init/00-create-test-db.sql:/docker-entrypoint-initdb.d/00-create-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laluan -d laluankitani"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # GraphHopper (routing) is added in the routing milestone, once the Brunei OSM extract is in place.
+
+volumes:
+  pgdata:

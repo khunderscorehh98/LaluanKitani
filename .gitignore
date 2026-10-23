@@ -8,6 +8,7 @@ logo-reference-only/
 .env
 .env.*
 !.env.example
+!.env.*.example
 *.pem
 *.key
 *.p8
@@ -75,12 +76,25 @@ graphhopper/data/
 *.geoparquet
 data/raw/
 
-# ─── Database ──────────────────────────────────────────────────────────
+# ─── Database and Docker ───────────────────────────────────────────────
+# Migrations and seeds (*.sql) ARE committed; dumps and local data are not.
 *.dump
+*.pgdump
 *.sql.gz
+*.sql.zst
 *.backup
 pgdata/
 backups/
+# Personal overrides of docker-compose.yml (ports, volumes, passwords)
+docker-compose.override.yml
+compose.override.yml
+
+# ─── User uploads and exports (contain personal data) ──────────────────
+# Report photos, place photos, merchant registration documents, ad images
+uploads/
+storage/
+# Audit log and report CSV exports
+exports/
 
 # ─── Logs and temp ─────────────────────────────────────────────────────
 logs/
@@ -99,3 +113,6 @@ desktop.ini
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+
+# ─── Claude Code (per-machine settings; shared .claude/ files stay) ────
+.claude/settings.local.json
