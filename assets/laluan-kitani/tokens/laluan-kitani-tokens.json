@@ -1,0 +1,459 @@
+{
+  "name": "Laluan Kitani",
+  "version": 1,
+  "color": {
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light"
+      },
+      {
+        "id": "dark",
+        "name": "Dark"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "teal-green",
+        "value": {
+          "light": "#0F766E",
+          "dark": "#0F766E"
+        },
+        "usage": "Primary brand teal (light mode): buttons, the route line, the logo. Off-white text on it reads 5.2:1."
+      },
+      {
+        "name": "light-mint",
+        "value": {
+          "light": "#CCFBF1",
+          "dark": "#CCFBF1"
+        },
+        "usage": "Primary light: highlights and soft backgrounds. Charcoal text on it 13:1; teal-green text 4.9:1."
+      },
+      {
+        "name": "charcoal",
+        "value": {
+          "light": "#1F2937",
+          "dark": "#1F2937"
+        },
+        "usage": "Neutral dark: text in light mode, surfaces in dark mode."
+      },
+      {
+        "name": "off-white",
+        "value": {
+          "light": "#F9FAFB",
+          "dark": "#F9FAFB"
+        },
+        "usage": "Neutral light: the light-mode background and text on teal-green."
+      },
+      {
+        "name": "warm-sand",
+        "value": {
+          "light": "#E7D8C3",
+          "dark": "#E7D8C3"
+        },
+        "usage": "Accent for friendly, parked moments and sponsored cards. Charcoal text only (10.5:1); teal-green text on sand is 3.9:1, so large text only."
+      },
+      {
+        "name": "bright-teal",
+        "value": {
+          "light": "#14B8A6",
+          "dark": "#14B8A6"
+        },
+        "usage": "Dark-mode primary: buttons, route and logo on charcoal (5.9:1). Labels on it are charcoal, never white (white is 2.4:1)."
+      },
+      {
+        "name": "light-teal",
+        "value": {
+          "light": "#5EEAD4",
+          "dark": "#5EEAD4"
+        },
+        "usage": "Teal text on dark backgrounds (9.9:1 on charcoal)."
+      },
+      {
+        "name": "surface",
+        "value": {
+          "light": "{off-white}",
+          "dark": "{charcoal}"
+        },
+        "usage": "Page and app background."
+      },
+      {
+        "name": "surface-raised",
+        "value": {
+          "light": "#FFFFFF",
+          "dark": "#111827"
+        },
+        "usage": "Cards, sheets and banners that sit above surface. Supporting neutral, not part of the core palette."
+      },
+      {
+        "name": "ink",
+        "value": {
+          "light": "{charcoal}",
+          "dark": "{off-white}"
+        },
+        "usage": "Primary text on surface, surface-raised, light-mint and warm-sand."
+      },
+      {
+        "name": "ink-muted",
+        "value": {
+          "light": "#4B5563",
+          "dark": "#D1D5DB"
+        },
+        "usage": "Secondary text on surface (7.2:1 light, 10:1 dark). Supporting neutral, not part of the core palette."
+      },
+      {
+        "name": "hairline",
+        "value": {
+          "light": "#E5E7EB",
+          "dark": "#374151"
+        },
+        "usage": "Dividers and card borders only, never text. Supporting neutral."
+      },
+      {
+        "name": "primary",
+        "value": {
+          "light": "{teal-green}",
+          "dark": "{bright-teal}"
+        },
+        "usage": "Buttons, the active route line, selected states."
+      },
+      {
+        "name": "on-primary",
+        "value": {
+          "light": "{off-white}",
+          "dark": "{charcoal}"
+        },
+        "usage": "Text and icons on a primary fill: off-white in light mode, charcoal in dark mode."
+      },
+      {
+        "name": "teal-text",
+        "value": {
+          "light": "{teal-green}",
+          "dark": "{light-teal}"
+        },
+        "usage": "Teal text and links on surface: \"Kitani\" in the lockup, highlighted words."
+      },
+      {
+        "name": "highlight",
+        "value": {
+          "light": "{light-mint}",
+          "dark": "{light-mint}"
+        },
+        "usage": "Chips and highlight backgrounds; text on it is always charcoal."
+      },
+      {
+        "name": "friendly",
+        "value": {
+          "light": "{warm-sand}",
+          "dark": "{warm-sand}"
+        },
+        "usage": "Background for parked, warm moments and sponsored cards; text on it is charcoal."
+      },
+      {
+        "name": "focus-ring",
+        "value": {
+          "light": "{teal-green}",
+          "dark": "{light-teal}"
+        },
+        "usage": "Keyboard focus: a solid 2px ring with a 2px surface gap."
+      },
+      {
+        "name": "report-careful",
+        "value": {
+          "light": "#EAB308",
+          "dark": "#EAB308"
+        },
+        "usage": "RESERVED for map warnings: Careful badge. Its icon is charcoal, not white (white is 1.9:1). Never a brand colour."
+      },
+      {
+        "name": "report-jammed",
+        "value": {
+          "light": "#EA580C",
+          "dark": "#EA580C"
+        },
+        "usage": "RESERVED for map warnings: Jammed badge and the Peak Spot zone. White icon 3.6:1. Never a brand colour."
+      },
+      {
+        "name": "report-danger",
+        "value": {
+          "light": "#DC2626",
+          "dark": "#DC2626"
+        },
+        "usage": "RESERVED for map warnings: Danger badge. White icon 4.8:1. Never a brand colour."
+      },
+      {
+        "name": "report-flooded",
+        "value": {
+          "light": "#2563EB",
+          "dark": "#2563EB"
+        },
+        "usage": "RESERVED for map warnings: Flooded badge. White icon 5.2:1. Same lightness as teal-green, so it is told apart by its wave icon, never by hue alone."
+      },
+      {
+        "name": "report-closed",
+        "value": {
+          "light": "#0A0A0A",
+          "dark": "#0A0A0A"
+        },
+        "usage": "RESERVED for map warnings: Closed badge. Needs its white ring to show on dark maps (1.35:1 against charcoal without it)."
+      },
+      {
+        "name": "report-icon",
+        "value": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "usage": "Icon colour inside report badges (except Careful)."
+      },
+      {
+        "name": "report-ink-careful",
+        "value": {
+          "light": "{charcoal}",
+          "dark": "{charcoal}"
+        },
+        "usage": "Icon colour inside the yellow Careful badge (7.7:1)."
+      },
+      {
+        "name": "report-ring",
+        "value": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "usage": "The 2px ring around every report badge so it holds on any map tile."
+      },
+      {
+        "name": "peak-zone",
+        "value": {
+          "light": "#EA580C33",
+          "dark": "#EA580C40"
+        },
+        "usage": "RESERVED: translucent orange area for a Peak Spot on the map."
+      }
+    ]
+  },
+  "type": {
+    "fonts": [],
+    "families": {
+      "sans": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "groups": [
+      {
+        "name": "Headings",
+        "family": "sans",
+        "styles": [
+          {
+            "name": "display",
+            "fontSize": "48px",
+            "lineHeight": "52px",
+            "fontWeight": 800,
+            "letterSpacing": "-0.02em",
+            "sample": "Tejem? Tani elak.",
+            "usage": "Campaign and social headlines only."
+          },
+          {
+            "name": "h1",
+            "fontSize": "32px",
+            "lineHeight": "40px",
+            "fontWeight": 800,
+            "letterSpacing": "-0.01em",
+            "sample": "Laluan Kitani",
+            "usage": "Screen titles when parked."
+          },
+          {
+            "name": "h2",
+            "fontSize": "24px",
+            "lineHeight": "32px",
+            "fontWeight": 700,
+            "sample": "Tempat disimpan",
+            "usage": "Section titles."
+          },
+          {
+            "name": "h3",
+            "fontSize": "18px",
+            "lineHeight": "26px",
+            "fontWeight": 700,
+            "sample": "Share trip",
+            "usage": "Card titles, list headers."
+          }
+        ]
+      },
+      {
+        "name": "Text",
+        "family": "sans",
+        "styles": [
+          {
+            "name": "body-lg",
+            "fontSize": "18px",
+            "lineHeight": "28px",
+            "fontWeight": 500,
+            "sample": "Bertolak sebelum 7:10 untuk sampai tepat masa.",
+            "usage": "Lead paragraphs and onboarding."
+          },
+          {
+            "name": "body",
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "fontWeight": 500,
+            "sample": "Reports from Bruneian drivers keep this route accurate.",
+            "usage": "Default body copy."
+          },
+          {
+            "name": "small",
+            "fontSize": "14px",
+            "lineHeight": "20px",
+            "fontWeight": 500,
+            "sample": "Reported 4 min ago · Trusted reporter",
+            "usage": "Metadata and helper text."
+          },
+          {
+            "name": "caption",
+            "fontSize": "12px",
+            "lineHeight": "16px",
+            "fontWeight": 700,
+            "letterSpacing": "0.04em",
+            "sample": "PEAK SPOT · 7:00–7:45",
+            "usage": "Labels and badges; may be uppercase."
+          }
+        ]
+      },
+      {
+        "name": "Driving",
+        "family": "sans",
+        "styles": [
+          {
+            "name": "turn-distance",
+            "fontSize": "40px",
+            "lineHeight": "44px",
+            "fontWeight": 800,
+            "sample": "300 m",
+            "usage": "Distance to the next manoeuvre."
+          },
+          {
+            "name": "turn-street",
+            "fontSize": "24px",
+            "lineHeight": "30px",
+            "fontWeight": 800,
+            "sample": "Jalan Pengiran Babu Raja",
+            "usage": "Bold turn instruction; wraps to two lines, never truncates mid-word."
+          },
+          {
+            "name": "drive-alert",
+            "fontSize": "20px",
+            "lineHeight": "26px",
+            "fontWeight": 700,
+            "sample": "Flood ahead. Rerouting.",
+            "usage": "Glanceable alerts while moving."
+          },
+          {
+            "name": "eta",
+            "fontSize": "16px",
+            "lineHeight": "22px",
+            "fontWeight": 700,
+            "sample": "Arrive 7:32 · 18 min",
+            "usage": "Arrival time and trip summary."
+          }
+        ]
+      }
+    ]
+  },
+  "spacing": {
+    "tokens": [
+      {
+        "name": "space-1",
+        "value": "4px",
+        "usage": "Icon-to-label gap."
+      },
+      {
+        "name": "space-2",
+        "value": "8px",
+        "usage": "Tight gaps inside chips and badges."
+      },
+      {
+        "name": "space-3",
+        "value": "12px",
+        "usage": "List row padding."
+      },
+      {
+        "name": "space-4",
+        "value": "16px",
+        "usage": "Screen side margin and card padding."
+      },
+      {
+        "name": "space-6",
+        "value": "24px",
+        "usage": "Space between groups."
+      },
+      {
+        "name": "space-8",
+        "value": "32px",
+        "usage": "Section spacing on parked screens."
+      },
+      {
+        "name": "space-12",
+        "value": "48px",
+        "usage": "Minimum touch target height for anything tapped while driving."
+      }
+    ]
+  },
+  "radius": {
+    "tokens": [
+      {
+        "name": "radius-sm",
+        "value": "8px",
+        "usage": "Chips, inputs."
+      },
+      {
+        "name": "radius-md",
+        "value": "12px",
+        "usage": "Buttons, list cards."
+      },
+      {
+        "name": "radius-lg",
+        "value": "20px",
+        "usage": "Bottom sheets, turn banner, social cards."
+      },
+      {
+        "name": "radius-icon",
+        "value": "22.5%",
+        "usage": "Approximates the rounded square of the app icon artwork when a container must match it."
+      },
+      {
+        "name": "radius-pill",
+        "value": "999px",
+        "usage": "Report badges (circles) and pill buttons."
+      }
+    ]
+  },
+  "shadow": {
+    "tokens": [
+      {
+        "name": "shadow-float",
+        "value": {
+          "light": "0 4px 16px rgba(31,41,55,0.14)",
+          "dark": "0 4px 16px rgba(0,0,0,0.45)"
+        },
+        "usage": "Turn banner and bottom sheet floating over the map. Never on the logo."
+      }
+    ]
+  },
+  "icon": {
+    "note": "Tabler Icons outline set.",
+    "tokens": [
+      {
+        "name": "icon-size",
+        "value": "24px",
+        "usage": "Default icon grid."
+      },
+      {
+        "name": "icon-stroke",
+        "value": "2px",
+        "usage": "Stroke width for every outline icon."
+      },
+      {
+        "name": "badge-size",
+        "value": "32px",
+        "usage": "Report badge diameter on the map (icon 18px inside)."
+      }
+    ]
+  }
+}

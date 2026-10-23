@@ -1,0 +1,72 @@
+/* Laluan Kitani — design tokens (from the Laluan Kitani design system, v1, Oct 2026)
+   Font: Manrope 400–800 (Google Fonts, SIL OFL). Icons: Tabler Icons outline, 2px stroke. */
+
+:root {
+  /* Core palette */
+  --lk-teal-green: #0F766E;
+  --lk-light-mint: #CCFBF1;
+  --lk-charcoal: #1F2937;
+  --lk-off-white: #F9FAFB;
+  --lk-warm-sand: #E7D8C3;
+  --lk-bright-teal: #14B8A6;
+  --lk-light-teal: #5EEAD4;
+
+  /* Semantic (light mode) */
+  --lk-surface: #F9FAFB;
+  --lk-surface-raised: #FFFFFF;
+  --lk-ink: #1F2937;
+  --lk-ink-muted: #4B5563;
+  --lk-hairline: #E5E7EB;
+  --lk-primary: #0F766E;
+  --lk-on-primary: #F9FAFB;
+  --lk-teal-text: #0F766E;
+  --lk-highlight: #CCFBF1;
+  --lk-friendly: #E7D8C3;
+  --lk-focus-ring: #0F766E;
+
+  /* Reserved for map warnings only — never buttons, marketing or logo */
+  --lk-report-careful: #EAB308;   /* icon: charcoal */
+  --lk-report-jammed: #EA580C;    /* icon: white */
+  --lk-report-danger: #DC2626;    /* icon: white */
+  --lk-report-flooded: #2563EB;   /* icon: white */
+  --lk-report-closed: #0A0A0A;    /* icon: white, keep the white ring */
+  --lk-report-ring: #FFFFFF;
+  --lk-peak-zone: #EA580C33;
+
+  /* Spacing, radius, shadow */
+  --lk-space-1: 4px; --lk-space-2: 8px; --lk-space-3: 12px; --lk-space-4: 16px;
+  --lk-space-6: 24px; --lk-space-8: 32px; --lk-space-12: 48px;
+  --lk-radius-sm: 8px; --lk-radius-md: 12px; --lk-radius-lg: 20px; --lk-radius-pill: 999px;
+  --lk-shadow-float: 0 4px 16px rgba(31,41,55,0.14);
+
+  --lk-font: Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --lk-surface: #1F2937;
+  --lk-surface-raised: #111827;
+  --lk-ink: #F9FAFB;
+  --lk-ink-muted: #D1D5DB;
+  --lk-hairline: #374151;
+  --lk-primary: #14B8A6;
+  --lk-on-primary: #1F2937;   /* white on bright-teal is only 2.4:1 */
+  --lk-teal-text: #5EEAD4;
+  --lk-focus-ring: #5EEAD4;
+  --lk-peak-zone: #EA580C40;
+  --lk-shadow-float: 0 4px 16px rgba(0,0,0,0.45);
+}
+
+/* Type scale: size / line-height / weight */
+.lk-display      { font: 800 48px/52px var(--lk-font); letter-spacing: -0.02em; }
+.lk-h1           { font: 800 32px/40px var(--lk-font); letter-spacing: -0.01em; }
+.lk-h2           { font: 700 24px/32px var(--lk-font); }
+.lk-h3           { font: 700 18px/26px var(--lk-font); }
+.lk-body-lg      { font: 500 18px/28px var(--lk-font); }
+.lk-body         { font: 500 16px/24px var(--lk-font); }
+.lk-small        { font: 500 14px/20px var(--lk-font); }
+.lk-caption      { font: 700 12px/16px var(--lk-font); letter-spacing: 0.04em; }
+.lk-turn-distance{ font: 800 40px/44px var(--lk-font); }
+.lk-turn-street  { font: 800 24px/30px var(--lk-font); }
+.lk-drive-alert  { font: 700 20px/26px var(--lk-font); }
+.lk-eta          { font: 700 16px/22px var(--lk-font); }
