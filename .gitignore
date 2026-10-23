@@ -71,6 +71,8 @@ coverage/
 *.osm
 graph-cache/
 graphhopper/data/
+# Downloaded command-line tools (e.g. the pmtiles CLI)
+tools/
 # Overture / place-data imports
 *.parquet
 *.geoparquet
