@@ -123,3 +123,8 @@ desktop.ini
 
 # ─── Personal progress notes ───────────────────────────────────────────
 /TODO.txt
+
+
+/assets/geodata
+# Routing: OSM extracts (*.osm.pbf, above) and the GraphHopper graph built from them
+/infra/routing/data/
