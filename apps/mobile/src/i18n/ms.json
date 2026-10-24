@@ -114,7 +114,11 @@
     "pinNote": "Pin menandakan tempat itu. Ketik nama di peta untuk guna tempat itu. Hanya anda yang dapat melihatnya.",
     "namePlaceholder": "Nama atau alamat (pilihan)",
     "savePin": "Simpan tempat ini",
-    "pinnedPlace": "Tempat dipin"
+    "pinnedPlace": "Tempat dipin",
+    "upcoming": "Perjalanan akan datang",
+    "upcomingDetail": "{{day}} · bertolak {{leaveBy}} · sampai {{arriveBy}}",
+    "today": "Hari ini",
+    "cancelReminder": "Batalkan peringatan"
   },
   "reportLabels": {
     "careful": "Berhati-hati",
@@ -330,7 +334,12 @@
     "notInBrunei": "Laluan bermula dari lokasi anda, dan ia bukan di Brunei.",
     "noRoute": "Tiada laluan ditemui ke tempat ini.",
     "unavailable": "Perancangan laluan tidak tersedia sekarang. Cuba lagi sebentar lagi.",
-    "closureAtEndpoint": "Ada jalan ditutup di permulaan atau penghujung perjalanan ini. Laluan tetap ke sana; semak laporan."
+    "closureAtEndpoint": "Ada jalan ditutup di permulaan atau penghujung perjalanan ini. Laluan tetap ke sana; semak laporan.",
+    "remindMe": "Ingatkan saya",
+    "reminderSet": "Peringatan ditetapkan",
+    "remindAt": "Kami akan mengingatkan anda pada {{time}}, 10 minit sebelum anda perlu bertolak.",
+    "leaveNowAlready": "Anda perlu bertolak sekarang untuk sampai tepat masa. Ketik Mula.",
+    "remindersOff": "Pemberitahuan dimatikan untuk Laluan Kitani. Hidupkannya dalam tetapan telefon anda."
   },
   "nav": {
     "simulated": "Pemanduan simulasi (binaan pembangunan) · kelajuan 3×",
@@ -398,5 +407,10 @@
   "spot": {
     "unnamed": "Tempat dipin",
     "notice": "Dari peta. Tempat ini belum ada dalam Laluan Kitani, jadi waktu buka dan nama tempatannya belum diketahui."
+  },
+  "notifications": {
+    "tripsChannel": "Peringatan perjalanan",
+    "leaveSoonTitle": "Bertolak tidak lama lagi ke {{name}}",
+    "leaveSoonBody": "Bertolak sebelum {{leaveBy}} untuk sampai sebelum {{arriveBy}}. Ketik untuk semak laluan."
   }
 }

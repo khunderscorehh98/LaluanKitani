@@ -115,7 +115,11 @@
     "pinNote": "The pin marks the spot. Tap a name on the map to use that place. Only you can see it.",
     "namePlaceholder": "Name or address (optional)",
     "savePin": "Save this spot",
-    "pinnedPlace": "Pinned spot"
+    "pinnedPlace": "Pinned spot",
+    "upcoming": "Upcoming trips",
+    "upcomingDetail": "{{day}} · leave {{leaveBy}} · arrive {{arriveBy}}",
+    "today": "Today",
+    "cancelReminder": "Cancel reminder"
   },
   "reportLabels": {
     "careful": "Careful",
@@ -339,7 +343,12 @@
     "notInBrunei": "Routes start from your location, and it is not in Brunei.",
     "noRoute": "No route found to this place.",
     "unavailable": "Routing is not available right now. Try again in a moment.",
-    "closureAtEndpoint": "A closed road is at the start or end of this trip. The route still goes there; check the reports."
+    "closureAtEndpoint": "A closed road is at the start or end of this trip. The route still goes there; check the reports.",
+    "remindMe": "Remind me",
+    "reminderSet": "Reminder set",
+    "remindAt": "We will remind you at {{time}}, 10 min before you need to leave.",
+    "leaveNowAlready": "You need to leave now to make it. Tap Start.",
+    "remindersOff": "Notifications are off for Laluan Kitani. Turn them on in your phone settings."
   },
   "nav": {
     "simulated": "Simulated drive (development build) · 3× speed",
@@ -408,5 +417,10 @@
   "spot": {
     "unnamed": "Pinned spot",
     "notice": "From the map. This place isn't in Laluan Kitani yet, so its opening hours and local names aren't known."
+  },
+  "notifications": {
+    "tripsChannel": "Trip reminders",
+    "leaveSoonTitle": "Leave soon for {{name}}",
+    "leaveSoonBody": "Leave by {{leaveBy}} to arrive by {{arriveBy}}. Tap to check the route."
   }
 }

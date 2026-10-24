@@ -3,18 +3,25 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import IconBellCheck from '@tabler/icons-react-native/IconBellCheck';
 import IconNavigation from '@tabler/icons-react-native/IconNavigation';
 import IconPencil from '@tabler/icons-react-native/IconPencil';
 import IconPlus from '@tabler/icons-react-native/IconPlus';
 import IconStar from '@tabler/icons-react-native/IconStar';
+import IconX from '@tabler/icons-react-native/IconX';
 import { ListRow } from '../../components/ListRow';
 import { SectionHeader } from '../../components/SectionHeader';
+import { formatClock } from '../../format';
+import { cancelReminder } from '../../notifications';
 import { planRoute } from '../../route/planRoute';
 import { openSaved } from '../../saved/openSaved';
 import { SHORTCUT_ICONS } from '../../saved/shortcutIcons';
+import { usePlannedTrips } from '../../store/plannedTrips';
 import { SHORTCUTS, useSavedPlaces } from '../../store/savedPlaces';
 import { useTheme } from '../../theme/useTheme';
 import { fonts, radius, space, type } from '../../theme/tokens';
+
+const isToday = (iso) => new Date(iso).toDateString() === new Date().toDateString();
 
 /** Go (straight to the route preview) and edit, at the end of each saved place's row. */
 function RowActions({ onGo, onEdit }) {
@@ -46,6 +53,9 @@ export default function SavedTab() {
   const favourites = useSavedPlaces((state) => state.favourites);
   const removeShortcut = useSavedPlaces((state) => state.removeShortcut);
   const removeFavourite = useSavedPlaces((state) => state.removeFavourite);
+
+  const upcoming = usePlannedTrips((state) => state.trips).filter((trip) => new Date(trip.arriveBy) > new Date());
+  const removePlanned = usePlannedTrips((state) => state.remove);
 
   const pick = (slot) => router.push({ pathname: '/pick-place', params: { slot } });
 
@@ -89,6 +99,51 @@ export default function SavedTab() {
             <Text style={[styles.addLabel, { color: colors.onPrimary }]}>{t('saved.add')}</Text>
           </Pressable>
         </View>
+
+        {upcoming.length > 0 && (
+          <>
+            <SectionHeader title={t('saved.upcoming')} />
+            {upcoming.map((trip) => (
+              <ListRow
+                key={trip.id}
+                Icon={IconBellCheck}
+                tile
+                strong
+                title={trip.destination.name}
+                subtitle={t('saved.upcomingDetail', {
+                  leaveBy: formatClock(trip.leaveBy),
+                  arriveBy: formatClock(trip.arriveBy),
+                  day: isToday(trip.arriveBy) ? t('saved.today') : t('route.tomorrow'),
+                })}
+                onPress={() =>
+                  router.push({
+                    pathname: '/route',
+                    params: {
+                      to_lat: trip.destination.lat,
+                      to_lng: trip.destination.lng,
+                      to_name: trip.destination.name,
+                      arrive_by: trip.arriveBy,
+                    },
+                  })
+                }
+                trailing={
+                  <Pressable
+                    onPress={() => {
+                      cancelReminder(trip.reminderId);
+                      removePlanned(trip.id);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('saved.cancelReminder')}
+                    hitSlop={12}
+                    style={styles.edit}
+                  >
+                    <IconX size={20} strokeWidth={2} color={colors.inkMuted} />
+                  </Pressable>
+                }
+              />
+            ))}
+          </>
+        )}
 
         <SectionHeader title={t('saved.shortcuts')} />
         {SHORTCUTS.map((slot) => {

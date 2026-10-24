@@ -7,23 +7,28 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import IconChevronLeft from '@tabler/icons-react-native/IconChevronLeft';
+import IconBellCheck from '@tabler/icons-react-native/IconBellCheck';
+import IconBellPlus from '@tabler/icons-react-native/IconBellPlus';
 import IconClock from '@tabler/icons-react-native/IconClock';
 import IconNavigation from '@tabler/icons-react-native/IconNavigation';
 import { ApiError } from '../api/client';
 import { Button } from '../components/Button';
 import { formatClock } from '../format';
 import { useOrigin } from '../location';
+import { allowReminders, cancelReminder, scheduleReminder } from '../notifications';
 import { DEFAULT_CENTER } from '../map/style';
 import { RouteMap } from '../route/RouteMap';
 import { RouteOption } from '../route/RouteOption';
 import { TimePicker } from '../route/TimePicker';
 import { useRoutes } from '../route/useRoutes';
+import { findPlanned, usePlannedTrips } from '../store/plannedTrips';
 import { useTrip } from '../store/trip';
 import { useTheme } from '../theme/useTheme';
 import { fonts, radius, space, type } from '../theme/tokens';
 
 // How long to wait for a location fix before saying we don't have one
 const LOCATE_TIMEOUT_MS = 6000;
+const REMIND_BEFORE_MS = 10 * 60_000;
 
 /** The driver's position; in development builds, a Gadong stand-in when they're outside Brunei (e.g. an emulator). */
 function useStart() {
@@ -48,7 +53,9 @@ export default function RoutePreview() {
   const [, requestPermission] = Location.useForegroundPermissions();
   const to = [Number(params.to_lng), Number(params.to_lat)];
   const { from, status } = useStart();
-  const [arriveBy, setArriveBy] = useState(null);
+  // A tapped reminder opens with its arrival time
+  const [arriveBy, setArriveBy] = useState(() => (params.arrive_by ? new Date(params.arrive_by) : null));
+  // false, true (Leave by…) or 'queue' (Remind me without a time yet)
   const [picking, setPicking] = useState(params.mode === 'leave_by');
   const [selected, setSelected] = useState(0);
   const [sheetHeight, setSheetHeight] = useState(360);
@@ -60,6 +67,56 @@ export default function RoutePreview() {
 
   // A new arrival time plans new routes: start from the fastest again
   useEffect(() => setSelected(0), [arriveBy]);
+
+  // "Remind me": a reminder 10 minutes before leave-by. Android may deliver a
+  // scheduled notification a little late, so it never goes off right at the time.
+  const destination = { lat: to[1], lng: to[0], name: params.to_name };
+  const plannedTrips = usePlannedTrips((state) => state.trips);
+  const addPlanned = usePlannedTrips((state) => state.add);
+  const removePlanned = usePlannedTrips((state) => state.remove);
+  const queued = arriveBy && findPlanned(plannedTrips, destination, arriveBy);
+  const [remindError, setRemindError] = useState(null);
+  const [queueWhenReady, setQueueWhenReady] = useState(false);
+
+  const queue = async () => {
+    setRemindError(null);
+    const leaveBy = new Date(route.leave_by);
+    const remindAt = new Date(Math.max(leaveBy.getTime() - REMIND_BEFORE_MS, Date.now() + 60_000));
+    if (leaveBy <= new Date()) {
+      setRemindError(t('route.leaveNowAlready'));
+      return;
+    }
+    if (!(await allowReminders())) {
+      setRemindError(t('route.remindersOff'));
+      return;
+    }
+    const reminderId = await scheduleReminder({
+      at: remindAt,
+      title: t('notifications.leaveSoonTitle', { name: destination.name }),
+      body: t('notifications.leaveSoonBody', { leaveBy: formatClock(leaveBy), arriveBy: formatClock(arriveBy) }),
+      data: { to_lat: destination.lat, to_lng: destination.lng, to_name: destination.name, arrive_by: arriveBy.toISOString() },
+    });
+    addPlanned({
+      id: `${reminderId}`,
+      destination,
+      arriveBy: arriveBy.toISOString(),
+      leaveBy: leaveBy.toISOString(),
+      remindAt: remindAt.toISOString(),
+      reminderId,
+    });
+  };
+
+  const unqueue = () => {
+    cancelReminder(queued.reminderId);
+    removePlanned(queued.id);
+  };
+
+  useEffect(() => {
+    if (queueWhenReady && route?.leave_by && !isFetching) {
+      setQueueWhenReady(false);
+      queue();
+    }
+  }, [queueWhenReady, route, isFetching]);
 
   const fromText = {
     located: t('route.fromYou'),
@@ -174,21 +231,48 @@ export default function RoutePreview() {
               </View>
             </View>
 
-            <Pressable
-              onPress={() => {
-                startTrip({
-                  route,
-                  destination: { lat: to[1], lng: to[0], name: params.to_name },
-                  avoidedClosures: data.avoided_closures,
-                });
-                router.replace('/navigate');
-              }}
-              accessibilityRole="button"
-              style={({ pressed }) => [styles.start, { backgroundColor: colors.primary }, pressed && { opacity: 0.8 }]}
-            >
-              <IconNavigation size={22} strokeWidth={2} color={colors.onPrimary} />
-              <Text style={[styles.startText, { color: colors.onPrimary }]}>{t('route.start')}</Text>
-            </Pressable>
+            <View style={styles.buttons}>
+              <Pressable
+                onPress={() => {
+                  startTrip({
+                    route,
+                    destination: { lat: to[1], lng: to[0], name: params.to_name },
+                    avoidedClosures: data.avoided_closures,
+                  });
+                  router.replace('/navigate');
+                }}
+                accessibilityRole="button"
+                style={({ pressed }) => [styles.start, { backgroundColor: colors.primary }, pressed && { opacity: 0.8 }]}
+              >
+                <IconNavigation size={22} strokeWidth={2} color={colors.onPrimary} />
+                <Text style={[styles.startText, { color: colors.onPrimary }]}>{t('route.start')}</Text>
+              </Pressable>
+              <Pressable
+                onPress={queued ? unqueue : () => (arriveBy ? queue() : setPicking('queue'))}
+                accessibilityRole="button"
+                accessibilityState={{ selected: Boolean(queued) }}
+                style={({ pressed }) => [
+                  styles.remind,
+                  { backgroundColor: colors.selected, borderColor: queued ? colors.primary : colors.selected },
+                  pressed && { opacity: 0.7 },
+                ]}
+              >
+                {queued ? (
+                  <IconBellCheck size={22} strokeWidth={2} color={colors.tealText} />
+                ) : (
+                  <IconBellPlus size={22} strokeWidth={2} color={colors.ink} />
+                )}
+                <Text style={[styles.remindText, { color: queued ? colors.tealText : colors.ink }]} numberOfLines={1}>
+                  {queued ? t('route.reminderSet') : t('route.remindMe')}
+                </Text>
+              </Pressable>
+            </View>
+            {queued ? (
+              <Text style={[type.small, styles.center, { color: colors.inkMuted }]}>
+                {t('route.remindAt', { time: formatClock(queued.remindAt) })}
+              </Text>
+            ) : null}
+            {remindError ? <Text style={[type.small, styles.center, { color: colors.error }]}>{remindError}</Text> : null}
           </>
         )}
       </View>
@@ -198,6 +282,8 @@ export default function RoutePreview() {
         value={arriveBy}
         onPick={(time) => {
           setArriveBy(time);
+          // Opened from "Remind me": queue once the routes for that time are in
+          if (picking === 'queue') setQueueWhenReady(true);
           setPicking(false);
         }}
         onClear={() => {
@@ -267,7 +353,9 @@ const styles = StyleSheet.create({
   },
   timeFieldText: { fontFamily: fonts.bold },
   bigTime: { fontFamily: fonts.extraBold, fontSize: 30, lineHeight: 36 },
+  buttons: { flexDirection: 'row', gap: space[2] },
   start: {
+    flex: 1,
     height: 56,
     flexDirection: 'row',
     alignItems: 'center',
@@ -276,4 +364,15 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   startText: { fontFamily: fonts.bold, fontSize: 18 },
+  remind: {
+    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: space[2],
+    paddingHorizontal: space[4],
+    borderWidth: 1.5,
+    borderRadius: radius.md,
+  },
+  remindText: { fontFamily: fonts.bold, fontSize: 16 },
 });

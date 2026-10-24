@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -12,6 +12,8 @@ import {
 import { QueryClientProvider } from '@tanstack/react-query';
 import '../i18n';
 import { queryClient } from '../api/queryClient';
+import { onReminderOpened } from '../notifications';
+import { usePlannedTrips } from '../store/plannedTrips';
 import { useSettings } from '../store/settings';
 import { useTheme } from '../theme/useTheme';
 
@@ -31,6 +33,17 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsLoaded || fontError) SplashScreen.hideAsync();
   }, [fontsLoaded, fontError]);
+
+  // A tapped "time to leave" reminder opens its trip, planned again with
+  // today's reports. Past trips drop off the list.
+  const ready = (fontsLoaded || fontError) && onboarded;
+  useEffect(() => {
+    if (!ready) return undefined;
+    usePlannedTrips.getState().prune();
+    return onReminderOpened((data) => {
+      if (data.to_lat && data.to_lng) router.push({ pathname: '/route', params: data });
+    });
+  }, [ready]);
 
   if (!fontsLoaded && !fontError) return null;
 
