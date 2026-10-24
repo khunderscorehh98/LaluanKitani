@@ -3,6 +3,8 @@
 documents/
 logo-reference-only/
 *.zip
+# Files pending deletion review (see _archive/deletion-log.txt)
+_archive/
 
 # ─── Secrets and environment ───────────────────────────────────────────
 .env
