@@ -8,6 +8,8 @@ import { errorHandler, notFoundHandler } from './middleware/errors.js';
 import { healthRouter } from './routes/health.js';
 import { placesRouter } from './routes/places.js';
 import { mapLayersRouter } from './routes/map-layers.js';
+import { authRouter, meRouter } from './routes/auth.js';
+import { reportsRouter } from './routes/reports.js';
 
 export function createApp() {
   const app = express();
@@ -23,6 +25,9 @@ export function createApp() {
   app.use(healthRouter);
   app.use('/v1/places', placesRouter);
   app.use('/v1', mapLayersRouter);
+  app.use('/v1/reports', reportsRouter);
+  app.use('/v1/auth', authRouter);
+  app.use('/v1/me', meRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

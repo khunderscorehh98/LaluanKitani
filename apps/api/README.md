@@ -45,6 +45,17 @@ Coordinates are WGS84 (`lat`, `lng`); distances are in metres. Most endpoints ac
 | GET | `/v1/reports?lat=&lng=&radius=` | Live reports with votes, confirmation and routing effect |
 | GET | `/v1/peak-spots?lat=&lng=&radius=&at=` | Peak Spot zones (GeoJSON) and whether each is busy now |
 | GET | `/v1/closures?lat=&lng=&radius=&at=` | Published event closures that have not ended |
+| GET | `/v1/reports/:id?lat=&lng=` | One live report. Signed in, it also says whether it's yours (`mine`) and your vote (`my_vote`) |
+| POST | `/v1/reports` 🔒 | Post a report: `{ label, lat, lng, description? }`. Brunei only, 10 per hour per account |
+| POST | `/v1/reports/:id/votes` 🔒 | Vote `{ vote: "still_there" \| "gone" }`. One vote per driver, not on your own report. 2 "gone" votes that outnumber "still there" clear it |
+| POST | `/v1/auth/email/start` | Send a 6-digit sign-in code: `{ email }` |
+| POST | `/v1/auth/email/verify` | Sign in with the code: `{ email, code }`. Returns `{ token, user, new_account, needs_nickname }` |
+| POST | `/v1/auth/sign-out` 🔒 | End this device's session |
+| GET / PATCH | `/v1/me` 🔒 | The signed-in account; PATCH sets `{ nickname }` |
+
+🔒 needs `Authorization: Bearer <token>` from `/v1/auth/email/verify`.
+
+**Email is not sent yet.** Outside production, `/v1/auth/email/start` logs the code and returns it as `dev_code`, so the app and tests can sign in. Production needs an email provider before launch.
 
 Example:
 
@@ -91,8 +102,9 @@ test/
 
 ## Not built yet
 
-- **Authentication:** Google and Apple sign-in, and the email code.
-- **Write endpoints:** posting reports, votes, suggestions and saved places.
+- **Authentication:** Google and Apple sign-in, and sending the email code by real email.
+- **Write endpoints:** place suggestions and saved-place sync.
+- **Reputation and points** for confirmed reports, and a profanity filter on descriptions.
 - **Admin endpoints.**
 - **Routing through GraphHopper.**
 - **Live sharing** over Socket.IO.

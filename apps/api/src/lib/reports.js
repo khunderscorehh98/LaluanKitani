@@ -27,3 +27,21 @@ export function isConfirmed(label, stillThereCount) {
 export function routingEffect(label, stillThereCount) {
   return isConfirmed(label, stillThereCount) ? REPORT_LABELS[label].routing : 'none';
 }
+
+// A report is cleared once this many drivers say "It's gone" and they outnumber
+// "Still there". Mirrors CONFIRMATIONS_REQUIRED; a starting guess to tune.
+export const GONE_VOTES_TO_CLEAR = 2;
+
+export function shouldClear(goneCount, stillThereCount) {
+  return goneCount >= GONE_VOTES_TO_CLEAR && goneCount > stillThereCount;
+}
+
+/** When a new report stops showing, or null for labels that last until voted cleared. */
+export function expiresAt(label, from = new Date()) {
+  const minutes = REPORT_LABELS[label].expiresAfterMinutes;
+  return minutes === null ? null : new Date(from.getTime() + minutes * 60_000);
+}
+
+// Spam guard per account; generous enough for a driver on a bad day
+export const MAX_REPORTS_PER_HOUR = 10;
+export const DESCRIPTION_MAX_LENGTH = 140;

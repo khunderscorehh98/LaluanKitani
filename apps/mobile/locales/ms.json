@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Laluan Kitani",
+    "NSLocationWhenInUseUsageDescription": "Laluan Kitani menggunakan lokasi anda untuk arahan perjalanan dan amaran tentang laporan di laluan anda. Orang lain hanya melihatnya apabila anda menghidupkan Kongsi perjalanan."
+  },
+  "android": {
+    "app_name": "Laluan Kitani"
+  }
+}

@@ -1,0 +1,238 @@
+{
+  "brand": {
+    "tagline": "Tejem? Tani elak.",
+    "descriptor": "Navigasi komuniti Brunei"
+  },
+  "tabs": {
+    "map": "Peta",
+    "saved": "Tempat disimpan",
+    "profile": "Profil"
+  },
+  "common": {
+    "back": "Kembali",
+    "continue": "Teruskan",
+    "tryAgain": "Cuba lagi",
+    "cancel": "Batal",
+    "close": "Tutup"
+  },
+  "onboarding": {
+    "language": {
+      "title": "Pilih bahasa",
+      "optionNote": "Amaran dalam Bahasa Melayu baku",
+      "changeLater": "Boleh ditukar dalam Tetapan",
+      "noAccount": "Tiada akaun diperlukan. Terus guna peta."
+    },
+    "location": {
+      "title": "Kenapa kami perlukan lokasi anda",
+      "intro": "Telefon anda akan bertanya selepas ini. Ini yang Laluan Kitani lakukan dengannya.",
+      "whereTitle": "Tunjukkan di mana anda berada",
+      "whereBody": "Supaya arahan belok demi belok bermula dari anda.",
+      "warnTitle": "Amaran tentang laporan di hadapan",
+      "warnBody": "Banjir, kesesakan dan jalan ditutup di laluan anda.",
+      "planTitle": "Rancang masa untuk bertolak",
+      "planBody": "Mengelak Peak Spot waktu hantar sekolah.",
+      "privacy": "Hanya dikongsi dengan orang lain apabila anda menghidupkan Kongsi perjalanan.",
+      "allow": "Benarkan lokasi",
+      "notNow": "Bukan sekarang — lihat peta dahulu"
+    }
+  },
+  "map": {
+    "searchPlaceholder": "Cari tempat atau simpang",
+    "report": "Lapor",
+    "locate": "Tunjukkan lokasi saya",
+    "peakSpot": "PEAK SPOT",
+    "offline": "Tidak dapat menghubungi Laluan Kitani. Laporan mungkin tidak terkini."
+  },
+  "search": {
+    "title": "Cari",
+    "clear": "Kosongkan carian",
+    "recent": "Terkini",
+    "bestMatch": "Padanan terbaik",
+    "moreResults": "Hasil lain",
+    "hint": "Cuba nama tempatan, nombor simpang, atau apa yang anda perlukan, seperti \"pasport\" atau \"solat\".",
+    "noResults": "Tiada hasil untuk \"{{query}}\"",
+    "matchedAlias": "Padan dengan nama tempatan \"{{alias}}\"",
+    "matchedNeed": "Sesuai untuk \"{{need}}\"",
+    "simpangOnRoad": "Simpang {{number}}, {{road}}",
+    "simpangManyRoads": "{{count}} jalan ada Simpang {{number}}. Tambah nama jalan untuk mengecilkan carian.",
+    "simpangMatches": "Padanan simpang",
+    "placesOnSimpang": "Tempat di Simpang {{number}}",
+    "placeCount": "{{count}} tempat"
+  },
+  "place": {
+    "title": "Tempat",
+    "notFound": "Tempat ini tiada lagi di peta.",
+    "go": "Pergi",
+    "leaveBy": "Bertolak…",
+    "save": "Simpan",
+    "saved": "Disimpan",
+    "share": "Kongsi",
+    "hours": "Waktu buka",
+    "today": "hari ini",
+    "closedAllDay": "Tutup",
+    "busyTimes": "Waktu sibuk",
+    "busyTimesNote": "Waktu berlorek ialah tempoh Peak Spot di laluan ke sini.",
+    "peakSpotWindow": "Peak Spot {{from}}–{{to}} · {{name}}",
+    "nowPrayers": "Sekarang ({{now}}) · {{from}}–{{to}} tutup untuk solat Jumaat",
+    "reportsNearby": "Laporan berdekatan",
+    "reportMeta": "{{distance}} dari sini · {{ago}}",
+    "address": "Alamat",
+    "alsoKnownAs": "Juga dikenali sebagai",
+    "lastVerified": "Terakhir disahkan {{date}}",
+    "status": {
+      "fridayPrayers": "Tutup untuk solat Jumaat",
+      "fridayPrayersReopens": "Tutup untuk solat Jumaat · dibuka semula {{time}}",
+      "openUntil": "Buka · tutup {{time}}",
+      "openUntilPrayers": "Buka · tutup {{time}} untuk solat Jumaat",
+      "closedOpens": "Tutup · buka {{time}}",
+      "closedToday": "Tutup untuk hari ini",
+      "hoursNotConfirmed": "Waktu buka belum disahkan"
+    }
+  },
+  "saved": {
+    "title": "Tempat disimpan",
+    "add": "Tambah",
+    "shortcuts": "Pintasan",
+    "favourites": "Kegemaran",
+    "slots": {
+      "home": "Rumah",
+      "work": "Kerja",
+      "school": "Sekolah",
+      "favourite": "Kegemaran"
+    },
+    "tapToSet": "Ketik untuk tetapkan",
+    "noFavourites": "Simpan tempat yang selalu anda pergi dari halaman butirannya, atau ketik Tambah.",
+    "onThisPhone": "Tempat disimpan kekal di telefon ini. Log masuk untuk menyimpannya jika anda menukar telefon.",
+    "edit": "Ubah",
+    "change": "Tukar",
+    "remove": "Buang",
+    "pickPlaceholder": "Cari {{slot}} anda",
+    "chooseOnMap": "Pilih di peta",
+    "chooseOnMapNote": "Untuk rumah atau tempat yang tiada dalam senarai",
+    "pinTitle": "Gerakkan peta ke {{slot}} anda",
+    "pinNote": "Pin menandakan tempat itu. Hanya anda yang dapat melihatnya.",
+    "namePlaceholder": "Nama atau alamat (pilihan)",
+    "savePin": "Simpan tempat ini",
+    "pinnedPlace": "Tempat dipin"
+  },
+  "reportLabels": {
+    "careful": "Berhati-hati",
+    "jammed": "Sesak",
+    "danger": "Bahaya",
+    "flooded": "Banjir",
+    "closed": "Ditutup"
+  },
+  "days": {
+    "long": [
+      "Ahad",
+      "Isnin",
+      "Selasa",
+      "Rabu",
+      "Khamis",
+      "Jumaat",
+      "Sabtu"
+    ],
+    "short": [
+      "Ahd",
+      "Isn",
+      "Sel",
+      "Rab",
+      "Kha",
+      "Jum",
+      "Sab"
+    ]
+  },
+  "time": {
+    "justNow": "baru sahaja",
+    "minutesAgo": "{{count}} min lalu",
+    "hoursAgo": "{{count}} jam lalu"
+  },
+  "categories": {
+    "sports_venue": "Tempat sukan",
+    "immigration_office": "Pejabat kerajaan",
+    "land_transport_office": "Pejabat kerajaan",
+    "restaurant": "Restoran",
+    "grocery": "Kedai runcit",
+    "mosque": "Masjid",
+    "surau": "Surau",
+    "petrol_station": "Stesen minyak",
+    "clinic": "Klinik",
+    "hospital": "Hospital",
+    "parking": "Tempat letak kereta",
+    "school": "Sekolah",
+    "bank": "Bank",
+    "cafe": "Kafe",
+    "supermarket": "Pasar raya"
+  },
+  "report": {
+    "title": "Lapor",
+    "oneTap": "Satu ketik. Terus memandu.",
+    "atYourLocation": "Di lokasi anda",
+    "atMapCentre": "Di tengah peta",
+    "description": "Keterangan (pilihan)",
+    "whenStopped": "Hanya semasa berhenti",
+    "descriptionPlaceholder": "Tambah nota ringkas semasa berhenti",
+    "drivingNow": "Anda sedang bergerak. Tambah nota semasa berhenti.",
+    "thanks": "Terima kasih atas laporan anda. Pemandu lain kini dapat melihatnya.",
+    "errors": {
+      "noLocation": "Lokasi anda belum diketahui. Gerakkan peta ke tempat itu dan cuba lagi.",
+      "tooMany": "Anda telah menghantar banyak laporan. Cuba lagi sebentar lagi.",
+      "outsideBrunei": "Laporan hanya boleh dibuat di Brunei."
+    }
+  },
+  "reportDetail": {
+    "reported": "Dilaporkan {{ago}}",
+    "stillThereCount": "{{count}} pemandu kata masih ada",
+    "confirmed": "Disahkan",
+    "stillThereQ": "Masih ada?",
+    "stillThere": "Ya, masih ada",
+    "gone_button": "Sudah tiada",
+    "youSaidStillThere": "Anda kata masih ada. Terima kasih.",
+    "youSaidGone": "Anda kata sudah tiada. Terima kasih.",
+    "yours": "Ini laporan anda. Pemandu lain akan mengesahkannya.",
+    "gone": "Laporan ini telah tamat atau dibersihkan.",
+    "clearedThanks": "Terima kasih. Pemandu bersetuju ia sudah tiada, jadi ia dibuang dari peta."
+  },
+  "signIn": {
+    "title": {
+      "report": "Log masuk untuk melapor",
+      "profile": "Log masuk"
+    },
+    "why": {
+      "report": "Laporan memerlukan akaun supaya kami dapat menyekat spam dan menghargai pemandu yang membantu. Ciri lain berfungsi tanpa akaun.",
+      "profile": "Akaun membolehkan anda menghantar dan mengesahkan laporan. Ciri lain berfungsi tanpa akaun."
+    },
+    "email": "E-mel",
+    "emailMeACode": "E-melkan kod kepada saya",
+    "codeNote": "Kami hantar kod 6 digit. Tiada kata laluan untuk diingat.",
+    "enterCode": "Masukkan kod",
+    "codeSentTo": "Kami telah menghantar kod 6 digit ke {{email}}.",
+    "code": "Kod",
+    "devCode": "Binaan pembangunan: e-mel belum disediakan, jadi kod anda ialah {{code}}",
+    "resend": "Hantar kod baharu",
+    "resendIn": "Hantar kod baharu dalam {{seconds}} s",
+    "otherEmail": "Guna e-mel lain",
+    "pickNickname": "Pilih nama samaran",
+    "nicknameWhy": "Pemandu lain melihat nama ini pada laporan anda, bukan e-mel anda.",
+    "nickname": "Nama samaran",
+    "nicknameRules": "3 hingga 30 huruf, nombor atau _",
+    "privacy": "Dengan meneruskan, anda bersetuju dengan Dasar privasi. Kami tidak akan menyiarkan apa-apa bagi pihak anda.",
+    "errors": {
+      "invalid_code": "Kod itu salah atau telah tamat tempoh. Minta kod baharu.",
+      "too_many_requests": "Sila tunggu sebentar sebelum meminta kod lain.",
+      "nickname_taken": "Nama samaran itu sudah diambil. Cuba yang lain.",
+      "account_unavailable": "Akaun ini tidak boleh log masuk. Hubungi kami jika anda rasa ini satu kesilapan.",
+      "generic": "Ada yang tidak kena. Semak maklumat anda dan cuba lagi."
+    }
+  },
+  "profile": {
+    "signedOutTitle": "Anda belum log masuk",
+    "signedOutBody": "Log masuk untuk menghantar dan mengesahkan laporan. Carian, peta dan tempat disimpan berfungsi tanpa akaun.",
+    "signIn": "Log masuk",
+    "needsNicknameTitle": "Hampir siap",
+    "needsNicknameBody": "Pilih nama samaran untuk mula melapor.",
+    "pickNickname": "Pilih nama samaran",
+    "signOut": "Log keluar",
+    "comingSoon": "Mata, lencana, laporan anda dan tetapan akan datang."
+  }
+}

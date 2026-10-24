@@ -1,0 +1,240 @@
+{
+  "brand": {
+    "tagline": "Jammed? We dodge it.",
+    "descriptor": "Brunei's community navigation"
+  },
+  "tabs": {
+    "map": "Map",
+    "saved": "Saved",
+    "profile": "Profile"
+  },
+  "common": {
+    "back": "Back",
+    "continue": "Continue",
+    "tryAgain": "Try again",
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "onboarding": {
+    "language": {
+      "title": "Choose language",
+      "optionNote": "Local place names stay as Bruneians say them",
+      "changeLater": "You can change this in Settings.",
+      "noAccount": "No account needed."
+    },
+    "location": {
+      "title": "Why we need your location",
+      "intro": "Your phone will ask next. Here is what Laluan Kitani does with it.",
+      "whereTitle": "Show where you are",
+      "whereBody": "So turn-by-turn directions start from you.",
+      "warnTitle": "Warn you about reports ahead",
+      "warnBody": "Floods, jams and closures on your route.",
+      "planTitle": "Plan your Leave by time",
+      "planBody": "Around school-run Peak Spots.",
+      "privacy": "Only shared with others when you turn on Share trip.",
+      "allow": "Allow location",
+      "notNow": "Not now — browse the map"
+    }
+  },
+  "map": {
+    "searchPlaceholder": "Search places or simpang",
+    "report": "Report",
+    "locate": "Show my location",
+    "peakSpot": "PEAK SPOT",
+    "offline": "Can't reach Laluan Kitani. Reports may be out of date."
+  },
+  "search": {
+    "title": "Search",
+    "clear": "Clear search",
+    "recent": "Recent",
+    "bestMatch": "Best match",
+    "moreResults": "More results",
+    "hint": "Try a local name, a simpang number, or what you need, like \"passport\" or \"solat\".",
+    "noResults": "Nothing found for \"{{query}}\"",
+    "matchedAlias": "Matched local name \"{{alias}}\"",
+    "matchedNeed": "Good for \"{{need}}\"",
+    "simpangOnRoad": "Simpang {{number}}, {{road}}",
+    "simpangManyRoads": "{{count}} roads have a Simpang {{number}}. Add the jalan name to narrow it down.",
+    "simpangMatches": "Simpang matches",
+    "placesOnSimpang": "Places on Simpang {{number}}",
+    "placeCount_one": "1 place",
+    "placeCount_other": "{{count}} places"
+  },
+  "place": {
+    "title": "Place",
+    "notFound": "This place is no longer on the map.",
+    "go": "Go",
+    "leaveBy": "Leave by…",
+    "save": "Save",
+    "saved": "Saved",
+    "share": "Share",
+    "hours": "Opening hours",
+    "today": "today",
+    "closedAllDay": "Closed",
+    "busyTimes": "Busy times",
+    "busyTimesNote": "Shaded hours are Peak Spot windows on the way here.",
+    "peakSpotWindow": "Peak Spot {{from}}–{{to}} · {{name}}",
+    "nowPrayers": "Now ({{now}}) · {{from}}–{{to}} closed for prayers",
+    "reportsNearby": "Reports nearby",
+    "reportMeta": "{{distance}} away · {{ago}}",
+    "address": "Address",
+    "alsoKnownAs": "Also known as",
+    "lastVerified": "Last verified {{date}}",
+    "status": {
+      "fridayPrayers": "Closed for Friday prayers",
+      "fridayPrayersReopens": "Closed for Friday prayers · reopens {{time}}",
+      "openUntil": "Open · closes {{time}}",
+      "openUntilPrayers": "Open · closes {{time}} for Friday prayers",
+      "closedOpens": "Closed · opens {{time}}",
+      "closedToday": "Closed for the rest of today",
+      "hoursNotConfirmed": "Hours not confirmed"
+    }
+  },
+  "saved": {
+    "title": "Saved places",
+    "add": "Add",
+    "shortcuts": "Shortcuts",
+    "favourites": "Favourites",
+    "slots": {
+      "home": "Home",
+      "work": "Work",
+      "school": "School",
+      "favourite": "Favourite"
+    },
+    "tapToSet": "Tap to set",
+    "noFavourites": "Save places you go to often from their details page, or tap Add.",
+    "onThisPhone": "Saved places stay on this phone. Sign in to keep them if you change phones.",
+    "edit": "Edit",
+    "change": "Change",
+    "remove": "Remove",
+    "pickPlaceholder": "Search for your {{slot}}",
+    "chooseOnMap": "Choose on map",
+    "chooseOnMapNote": "For a house or a spot that isn't listed",
+    "pinTitle": "Move the map to your {{slot}}",
+    "pinNote": "The pin marks the spot. Only you can see it.",
+    "namePlaceholder": "Name or address (optional)",
+    "savePin": "Save this spot",
+    "pinnedPlace": "Pinned spot"
+  },
+  "reportLabels": {
+    "careful": "Careful",
+    "jammed": "Jammed",
+    "danger": "Danger",
+    "flooded": "Flooded",
+    "closed": "Closed"
+  },
+  "days": {
+    "long": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "short": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} h ago"
+  },
+  "categories": {
+    "sports_venue": "Sports venue",
+    "immigration_office": "Government office",
+    "land_transport_office": "Government office",
+    "restaurant": "Restaurant",
+    "grocery": "Grocery",
+    "mosque": "Mosque",
+    "surau": "Surau",
+    "petrol_station": "Petrol station",
+    "clinic": "Clinic",
+    "hospital": "Hospital",
+    "parking": "Parking",
+    "school": "School",
+    "bank": "Bank",
+    "cafe": "Cafe",
+    "supermarket": "Supermarket"
+  },
+  "report": {
+    "title": "Report",
+    "oneTap": "One tap. Then drive.",
+    "atYourLocation": "At your location",
+    "atMapCentre": "At the centre of the map",
+    "description": "Description (optional)",
+    "whenStopped": "Available when stopped",
+    "descriptionPlaceholder": "Add a short note when you're parked",
+    "drivingNow": "You're moving. Add a note when stopped.",
+    "thanks": "Thanks for the report. Other drivers can see it now.",
+    "errors": {
+      "noLocation": "We don't know where you are yet. Move the map to the spot and try again.",
+      "tooMany": "You've sent a lot of reports. Try again in a little while.",
+      "outsideBrunei": "Reports can only be made in Brunei."
+    }
+  },
+  "reportDetail": {
+    "reported": "Reported {{ago}}",
+    "stillThereCount_one": "1 driver says still there",
+    "stillThereCount_other": "{{count}} drivers say still there",
+    "confirmed": "Confirmed",
+    "stillThereQ": "Still there?",
+    "stillThere": "Still there",
+    "gone_button": "It's gone",
+    "youSaidStillThere": "You said it's still there. Thank you.",
+    "youSaidGone": "You said it's gone. Thank you.",
+    "yours": "This is your report. Other drivers confirm it.",
+    "gone": "This report has ended or been cleared.",
+    "clearedThanks": "Thanks. Drivers agree it's gone, so it's off the map."
+  },
+  "signIn": {
+    "title": {
+      "report": "Sign in to report",
+      "profile": "Sign in"
+    },
+    "why": {
+      "report": "Reports need an account so we can stop spam and thank the drivers who help. Everything else works without one.",
+      "profile": "An account lets you post and confirm reports. Everything else works without one."
+    },
+    "email": "Email",
+    "emailMeACode": "Email me a code",
+    "codeNote": "We send a 6-digit code. No password to remember.",
+    "enterCode": "Enter the code",
+    "codeSentTo": "We sent a 6-digit code to {{email}}.",
+    "code": "Code",
+    "devCode": "Development build: email isn't set up yet, so your code is {{code}}",
+    "resend": "Send a new code",
+    "resendIn": "Send a new code in {{seconds}} s",
+    "otherEmail": "Use a different email",
+    "pickNickname": "Pick a nickname",
+    "nicknameWhy": "Other drivers see this on your reports, never your email.",
+    "nickname": "Nickname",
+    "nicknameRules": "3 to 30 letters, numbers or _",
+    "privacy": "By continuing you agree to the Privacy policy. We never post anything for you.",
+    "errors": {
+      "invalid_code": "That code is wrong or has expired. Ask for a new one.",
+      "too_many_requests": "Please wait a little before asking for another code.",
+      "nickname_taken": "That nickname is taken. Try another.",
+      "account_unavailable": "This account can't sign in. Contact us if you think that's a mistake.",
+      "generic": "Something's not right. Check what you entered and try again."
+    }
+  },
+  "profile": {
+    "signedOutTitle": "You're not signed in",
+    "signedOutBody": "Sign in to post and confirm reports. Search, the map and saved places work without an account.",
+    "signIn": "Sign in",
+    "needsNicknameTitle": "Almost done",
+    "needsNicknameBody": "Pick a nickname to start reporting.",
+    "pickNickname": "Pick a nickname",
+    "signOut": "Sign out",
+    "comingSoon": "Points, badges, your reports and settings are coming soon."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Laluan Kitani",
+    "NSLocationWhenInUseUsageDescription": "Laluan Kitani uses your location for turn-by-turn directions and to warn you about reports on your route. Others only see it when you turn on Share trip."
+  },
+  "android": {
+    "app_name": "Laluan Kitani"
+  }
+}
