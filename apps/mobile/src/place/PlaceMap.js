@@ -1,6 +1,6 @@
 // Static map header showing where the place is. Not draggable: the screen
 // scrolls underneath it.
-import { Camera, GeoJSONSource, Layer, Map } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map } from '../map/components';
 import { mapStyle } from '../map/style';
 import { useTheme } from '../theme/useTheme';
 

@@ -34,6 +34,8 @@ export const useSavedPlaces = create(
           favourites: [saved, ...favourites.filter((f) => f.key !== saved.key)].slice(0, MAX_FAVOURITES),
         })),
       removeFavourite: (key) => set(({ favourites }) => ({ favourites: favourites.filter((f) => f.key !== key) })),
+      // Account deletion removes saved places fully (privacy rule)
+      clearAll: () => set({ shortcuts: { home: null, work: null, school: null }, favourites: [] }),
     }),
     {
       name: 'saved-places',

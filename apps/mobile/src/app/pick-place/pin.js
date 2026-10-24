@@ -1,15 +1,16 @@
 // Pin a point on the map to save, e.g. a house. The pin stays in the middle
 // of the screen; the driver moves the map under it.
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Camera, Map, NativeUserLocation } from '@maplibre/maplibre-react-native';
+import { Camera, Map, NativeUserLocation } from '../../map/components';
 import IconChevronLeft from '@tabler/icons-react-native/IconChevronLeft';
 import IconMapPinFilled from '@tabler/icons-react-native/IconMapPinFilled';
 import { Button } from '../../components/Button';
 import { BRUNEI_BOUNDS, useOrigin } from '../../location';
+import { labelAt } from '../../map/labels';
 import { DEFAULT_CENTER, mapStyle } from '../../map/style';
 import { saveTo, savedFromPin } from '../../store/savedPlaces';
 import { useTheme } from '../../theme/useTheme';
@@ -26,6 +27,16 @@ export default function PinOnMap() {
   const { origin, located } = useOrigin();
   const [center, setCenter] = useState(null);
   const [name, setName] = useState('');
+  const map = useRef(null);
+  const camera = useRef(null);
+
+  // Tapping a label on the map moves the pin onto it and fills in its name
+  const onMapPress = async (event) => {
+    const label = await labelAt(map, event).catch(() => null);
+    if (!label) return;
+    camera.current?.easeTo({ center: label.lngLat, duration: 400 });
+    setName((current) => current || label.name);
+  };
 
   const start = origin ?? DEFAULT_CENTER;
   const [lng, lat] = center ?? start;
@@ -39,6 +50,8 @@ export default function PinOnMap() {
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.mapArea}>
         <Map
+          ref={map}
+          onPress={onMapPress}
           style={StyleSheet.absoluteFill}
           mapStyle={mapStyle(scheme)}
           logo={false}
@@ -46,7 +59,7 @@ export default function PinOnMap() {
           onRegionDidChange={(event) => setCenter(event.nativeEvent.center)}
         >
           {/* Keyed on the origin so the map re-centres once the location arrives */}
-          <Camera key={origin ? 'origin' : 'default'} initialViewState={{ center: start, zoom: 16 }} maxBounds={BRUNEI_BOUNDS} />
+          <Camera ref={camera} key={origin ? 'origin' : 'default'} initialViewState={{ center: start, zoom: 16 }} maxBounds={BRUNEI_BOUNDS} />
           {located && <NativeUserLocation />}
         </Map>
         {/* The pin's tip marks the map centre */}

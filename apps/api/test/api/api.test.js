@@ -169,3 +169,22 @@ describe('unknown routes', () => {
     expect(res.body.error.code).toBe('not_found');
   });
 });
+
+describe('GET /v1/places/at-label', () => {
+  const lookup = (query) => request(app).get('/v1/places/at-label').query(query).expect(200);
+
+  it('finds our place behind a map label by name and position', async () => {
+    const res = await lookup({ lat: 4.9461, lng: 114.9291, name: 'National Stadium', lang: 'en' });
+    expect(res.body.place).toMatchObject({ id: STADIUM, match: { type: 'map_label' } });
+  });
+
+  it('returns null when the name matches but the place is elsewhere', async () => {
+    const res = await lookup({ lat: 4.8, lng: 114.6, name: 'National Stadium' });
+    expect(res.body.place).toBeNull();
+  });
+
+  it('returns null for a label we do not have', async () => {
+    const res = await lookup({ lat: 4.9461, lng: 114.9291, name: 'Kedai Runcit Tiada' });
+    expect(res.body.place).toBeNull();
+  });
+});

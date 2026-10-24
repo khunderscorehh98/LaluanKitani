@@ -177,6 +177,28 @@ export async function searchPlaces({ q, lat, lng, limit, lang }) {
   };
 }
 
+// A tapped map label and our place must be this close, and their names this alike
+const LABEL_MATCH_RADIUS_M = 100;
+const LABEL_MATCH_MIN_SIMILARITY = 0.5;
+
+/**
+ * The place in our database behind a label on the base map, matched by name
+ * near the label's position. Null when we don't have it; the app then shows
+ * what the map label itself knows.
+ */
+export async function findPlaceAtLabel({ lat, lng, name, lang }) {
+  const { rows } = await query(
+    `SELECT ${PLACE_COLUMNS}, word_similarity(lower($3), p.search_name) AS similarity
+     FROM places_effective p
+     WHERE ST_DWithin(p.geom, ST_SetSRID(ST_MakePoint($2::float8, $1::float8), 4326)::geography, $4)
+       AND word_similarity(lower($3), p.search_name) >= $5
+     ORDER BY similarity DESC, distance_m
+     LIMIT 1`,
+    [lat, lng, normalizeQuery(name), LABEL_MATCH_RADIUS_M, LABEL_MATCH_MIN_SIMILARITY],
+  );
+  return rows[0] ? toSummary(rows[0], lang, { type: 'map_label' }) : null;
+}
+
 /** Everything the place details page shows. */
 export async function getPlace(id, { lang, lat, lng, at }) {
   const { rows } = await query(

@@ -54,6 +54,36 @@ export function timeAgo(iso, now = Date.now()) {
   return formatDate(iso);
 }
 
+/** 'Today 11:58', 'Yesterday 7:12', 'Tue 16:40' within a week, else the date. */
+export function formatWhen(iso, now = new Date()) {
+  const date = new Date(iso);
+  const time = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const daysAgo = Math.round((startOfDay(now) - startOfDay(date)) / 86_400_000);
+  if (daysAgo === 0) return i18n.t('time.todayAt', { time });
+  if (daysAgo === 1) return i18n.t('time.yesterdayAt', { time });
+  if (daysAgo < 7) return `${i18n.t('days.short', { returnObjects: true })[date.getDay()]} ${time}`;
+  return formatDate(iso);
+}
+
+/** A time of day: '7:38 am' in English, '07:38' in Malay. */
+export function formatClock(date) {
+  const d = new Date(date);
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  if (i18n.language !== 'en') return `${String(d.getHours()).padStart(2, '0')}:${minutes}`;
+  const hour = d.getHours() % 12 || 12;
+  return `${hour}:${minutes} ${d.getHours() < 12 ? 'am' : 'pm'}`;
+}
+
+/** 40 -> '40 min', 135 -> '2 h 15 min'. */
+export function formatDuration(minutes) {
+  const m = Math.max(1, Math.round(minutes));
+  if (m < 60) return i18n.t('time.minutes', { count: m });
+  const h = Math.floor(m / 60);
+  const rest = m % 60;
+  return rest ? `${i18n.t('time.hours', { count: h })} ${i18n.t('time.minutes', { count: rest })}` : i18n.t('time.hours', { count: h });
+}
+
 /** '12 Oct 2026' (or the Malay month name). */
 export function formatDate(iso) {
   const locale = i18n.language === 'ms' ? 'ms-BN' : 'en-GB';

@@ -29,6 +29,7 @@ npm run dev            # http://localhost:4000
 | `npm run db:migrate` | Apply new files in `db/migrations/`, in order |
 | `npm run db:seed` | Load demo fixtures (refuses when `NODE_ENV=production`) |
 | `npm run db:reset -- --yes` | Drop everything, re-migrate and re-seed (development only) |
+| `npm run places:import` | Load Brunei places from the latest Overture Maps release into the base layer (needs the DuckDB CLI in `tools/duckdb/`). Re-run to refresh; admin overrides are kept |
 | `npm test` | Rebuild the `laluankitani_test` database and run all tests |
 
 ## Endpoints (v1)
@@ -41,7 +42,9 @@ Coordinates are WGS84 (`lat`, `lng`); distances are in metres. Most endpoints ac
 | --- | --- | --- |
 | GET | `/health` | Database and PostGIS status |
 | GET | `/v1/places/search?q=&lat=&lng=&limit=&lang=` | Search by name, alias, simpang number or need (intent table) |
+| GET | `/v1/places/at-label?lat=&lng=&name=&lang=` | The place behind a tapped base-map label (same name within 100 m), or `{ place: null }` |
 | GET | `/v1/places/:id?lat=&lng=&lang=&at=` | Place details: names, aliases, hours, open status (Friday prayer rule), busy times, nearby reports |
+| GET | `/v1/route?from_lat=&from_lng=&to_lat=&to_lng=` (+ `at` or `arrive_by`) | Up to 2 routes, fastest first: distance, duration, ETA (or `leave_by` with `arrive_by`), `via` road, GeoJSON line, turn steps (`type`, `road`, `exit`), reports and Peak Spots on the way. Avoids confirmed Closed/Flooded and event closures; slows for Jammed and busy Peak Spots (rules in `src/lib/routing.js`). Needs GraphHopper; answers 503 `routing_unavailable` without it |
 | GET | `/v1/reports?lat=&lng=&radius=` | Live reports with votes, confirmation and routing effect |
 | GET | `/v1/peak-spots?lat=&lng=&radius=&at=` | Peak Spot zones (GeoJSON) and whether each is busy now |
 | GET | `/v1/closures?lat=&lng=&radius=&at=` | Published event closures that have not ended |
@@ -52,6 +55,9 @@ Coordinates are WGS84 (`lat`, `lng`); distances are in metres. Most endpoints ac
 | POST | `/v1/auth/email/verify` | Sign in with the code: `{ email, code }`. Returns `{ token, user, new_account, needs_nickname }` |
 | POST | `/v1/auth/sign-out` 🔒 | End this device's session |
 | GET / PATCH | `/v1/me` 🔒 | The signed-in account; PATCH sets `{ nickname }` |
+| DELETE | `/v1/me` 🔒 | Delete the account: personal details removed, sessions ended, past reports kept but anonymised |
+| GET | `/v1/me/stats` 🔒 | Points, level (`level`, `key`, `from`, `of`, `next`) and report counts. Rules in `src/lib/points.js` |
+| GET | `/v1/me/reports?limit=` 🔒 | Your reports, newest first, with status (`active`, `expired`, `cleared`, `removed`) and votes |
 
 🔒 needs `Authorization: Bearer <token>` from `/v1/auth/email/verify`.
 
@@ -106,6 +112,6 @@ test/
 - **Write endpoints:** place suggestions and saved-place sync.
 - **Reputation and points** for confirmed reports, and a profanity filter on descriptions.
 - **Admin endpoints.**
-- **Routing through GraphHopper.**
+- **Rerouting during navigation** (the app re-requests routes; the "saves about 3 minutes" rule).
 - **Live sharing** over Socket.IO.
 - **Push notifications.**

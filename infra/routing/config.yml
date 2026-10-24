@@ -1,0 +1,48 @@
+# GraphHopper 11 for Laluan Kitani (docker-compose service "routing").
+# The API adds a custom model to each request for live reports and Peak Spots
+# (hard avoids, soft avoids), so the car profile is prepared with landmarks
+# (LM), which allow per-request models. Contraction hierarchies (CH) don't.
+graphhopper:
+  datareader.file: /data/brunei.osm.pbf
+  graph.location: /data/graph-cache
+
+  profiles:
+    - name: car
+      custom_model_files: [car.json]
+      # Turn restrictions from OSM ("no right turn") and a cost for U-turns
+      turn_costs:
+        vehicle_types: [motorcar, motor_vehicle]
+        u_turn_costs: 60
+
+  profiles_ch: []
+  profiles_lm:
+    - profile: car
+
+  # road_class, road_environment, surface and max_speed are what our
+  # per-request models use (prefer main roads, avoid unpaved, etc.)
+  graph.encoded_values: car_access, car_average_speed, road_access, road_class, road_environment, surface, max_speed, toll
+
+  prepare.min_network_size: 200
+  prepare.subnetworks.threads: 1
+  routing.snap_preventions_default: tunnel, bridge, ferry
+  routing.non_ch.max_waypoint_distance: 1000000
+  import.osm.ignored_highways: footway,construction,cycleway,path,steps,pedestrian,bridleway
+  graph.dataaccess.default_type: RAM_STORE
+
+server:
+  application_connectors:
+    - type: http
+      port: 8989
+      bind_host: 0.0.0.0
+  request_log:
+    appenders: []
+  admin_connectors:
+    - type: http
+      port: 8990
+      bind_host: localhost
+
+logging:
+  appenders:
+    - type: console
+      time_zone: UTC
+      log_format: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"

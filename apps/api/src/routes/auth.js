@@ -6,8 +6,9 @@ import { config } from '../config.js';
 import { logger } from '../logger.js';
 import { CODE_LENGTH, NICKNAME_PATTERN } from '../lib/auth.js';
 import { requireAuth } from '../middleware/auth.js';
-import { validateBody } from '../middleware/validate.js';
+import { validateBody, validateQuery } from '../middleware/validate.js';
 import { revokeSession, setNickname, startEmailSignIn, verifyEmailSignIn } from '../services/auth.js';
+import { deleteAccount, getDriverStats, listMyReports } from '../services/me.js';
 
 export const authRouter = Router();
 export const meRouter = Router();
@@ -62,3 +63,24 @@ const meBody = z.object({
 meRouter.patch('/', requireAuth, validateBody(meBody), async (req, res) => {
   res.json({ user: await setNickname(req.user.id, req.valid.body.nickname) });
 });
+
+// DELETE /v1/me — deletes the account; past reports stay, anonymised
+meRouter.delete('/', requireAuth, async (req, res) => {
+  await deleteAccount(req.user.id);
+  res.status(204).end();
+});
+
+// GET /v1/me/stats — points, level and report counts for the Profile tab
+meRouter.get('/stats', requireAuth, async (req, res) => {
+  res.json({ stats: await getDriverStats(req.user.id) });
+});
+
+// GET /v1/me/reports?limit=20 — the driver's own reports, newest first
+meRouter.get(
+  '/reports',
+  requireAuth,
+  validateQuery(z.object({ limit: z.coerce.number().int().min(1).max(50).default(20) })),
+  async (req, res) => {
+    res.json({ reports: await listMyReports(req.user.id, req.valid.query) });
+  },
+);

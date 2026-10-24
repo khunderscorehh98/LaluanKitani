@@ -231,3 +231,61 @@ describe('POST /v1/reports/:id/votes', () => {
     await vote((await signIn()).auth, MISSING_ID, 'gone').expect(404);
   });
 });
+
+describe('profile: /v1/me/stats, /v1/me/reports and deleting the account', () => {
+  it('starts a new driver at 0 points, level 1', async () => {
+    const { auth } = await signIn();
+    const res = await request(app).get('/v1/me/stats').set(auth).expect(200);
+    expect(res.body.stats).toMatchObject({
+      points: 0,
+      level: 1,
+      key: 'new_driver',
+      of: 4,
+      reports: 0,
+      reports_this_month: 0,
+      next: { key: 'helper', points_to_go: 250 },
+    });
+  });
+
+  it('counts reports, confirmations received and votes cast', async () => {
+    const reporter = await signIn();
+    const voter = await signIn();
+    const posted = await postReport(reporter.auth, { label: 'jammed', ...NEAR_GROCERY }).expect(201);
+    await request(app)
+      .post(`/v1/reports/${posted.body.report.id}/votes`)
+      .set(voter.auth)
+      .send({ vote: 'still_there' })
+      .expect(200);
+
+    const mine = await request(app).get('/v1/me/stats').set(reporter.auth).expect(200);
+    expect(mine.body.stats).toMatchObject({ points: 15, reports: 1, reports_this_month: 1, confirmations_received: 1 });
+    const theirs = await request(app).get('/v1/me/stats').set(voter.auth).expect(200);
+    expect(theirs.body.stats).toMatchObject({ points: 2, votes_cast: 1 });
+  });
+
+  it("lists the driver's own reports, newest first, with their votes", async () => {
+    const { auth } = await signIn();
+    await postReport(auth, { label: 'careful', ...NEAR_GROCERY }).expect(201);
+    await postReport(auth, { label: 'flooded', ...NEAR_GROCERY }).expect(201);
+    const res = await request(app).get('/v1/me/reports').set(auth).expect(200);
+    expect(res.body.reports.map((r) => r.label)).toEqual(['flooded', 'careful']);
+    expect(res.body.reports[0]).toMatchObject({ status: 'active', votes: { still_there: 0, gone: 0 }, confirmed: false });
+  });
+
+  it("shows the reporter's level on report details", async () => {
+    const { auth } = await signIn();
+    const posted = await postReport(auth, { label: 'danger', ...NEAR_GROCERY }).expect(201);
+    const res = await request(app).get(`/v1/reports/${posted.body.report.id}`).expect(200);
+    expect(res.body.report.reporter).toMatchObject({ level: 1, level_key: 'new_driver' });
+  });
+
+  it('deletes the account but keeps its reports, anonymised', async () => {
+    const { auth } = await signIn();
+    const posted = await postReport(auth, { label: 'closed', ...NEAR_GROCERY }).expect(201);
+    await request(app).delete('/v1/me').set(auth).expect(204);
+
+    await request(app).get('/v1/me').set(auth).expect(401);
+    const report = await request(app).get(`/v1/reports/${posted.body.report.id}`).expect(200);
+    expect(report.body.report.reporter).toBeNull();
+  });
+});

@@ -5,13 +5,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
-import { Camera, GeoJSONSource, Layer, Map, NativeUserLocation } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map, NativeUserLocation } from '../../map/components';
 import IconCircleCheck from '@tabler/icons-react-native/IconCircleCheck';
 import IconCurrentLocation from '@tabler/icons-react-native/IconCurrentLocation';
 import IconPlus from '@tabler/icons-react-native/IconPlus';
 import IconSearch from '@tabler/icons-react-native/IconSearch';
 import IconWifiOff from '@tabler/icons-react-native/IconWifiOff';
 import { BRUNEI_BOUNDS, currentLngLat, inBrunei } from '../../location';
+import { LabelCard } from '../../map/LabelCard';
+import { labelAt, placeForLabel } from '../../map/labels';
 import { MapLayers } from '../../map/MapLayers';
 import { DEFAULT_CENTER, mapStyle } from '../../map/style';
 import { useMapLayers } from '../../map/useMapLayers';
@@ -25,7 +27,7 @@ const STREET_ZOOM = 15;
 
 export default function MapTab() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { scheme, colors } = useTheme();
   const insets = useSafeAreaInsets();
   const camera = useRef(null);
@@ -47,6 +49,32 @@ export default function MapTab() {
   const showOnMap = (lngLat) => {
     setFocus(lngLat);
     camera.current?.flyTo({ center: lngLat, zoom: STREET_ZOOM, duration: 800 });
+  };
+
+  // Tapping a map label: our place's details if we have it, else the label's own card
+  const map = useRef(null);
+  const [label, setLabel] = useState(null);
+  const latestTap = useRef(0);
+  const onMapPress = async (event) => {
+    const tap = (latestTap.current += 1);
+    const found = await labelAt(map, event).catch(() => null);
+    if (tap !== latestTap.current) return;
+    setLabel(found && { ...found, checking: true });
+    if (!found) return;
+    setFocus(found.lngLat);
+    const place = await placeForLabel(found, i18n.language).catch(() => null);
+    if (tap !== latestTap.current) return;
+    if (place) {
+      setLabel(null);
+      router.push(`/place/${place.id}`);
+    } else {
+      setLabel({ ...found, checking: false });
+    }
+  };
+  const closeLabel = () => {
+    latestTap.current += 1;
+    setLabel(null);
+    setFocus(null);
   };
 
   // Opened from Saved with a pinned spot: /?lng=..&lat=..
@@ -82,8 +110,10 @@ export default function MapTab() {
   return (
     <View style={styles.screen}>
       <Map
+        ref={map}
         style={StyleSheet.absoluteFill}
         mapStyle={mapStyle(scheme)}
+        onPress={onMapPress}
         logo={false}
         attributionPosition={{ top: insets.top + space[2], right: space[2] }}
         compassPosition={{ top: insets.top + space[12], right: space[3] }}
@@ -145,8 +175,10 @@ export default function MapTab() {
           <IconCurrentLocation size={26} strokeWidth={2} color={colors.tealText} />
         </Pressable>
 
+        {label && <LabelCard label={label} onClose={closeLabel} />}
+
         {/* Saved shortcuts. Drive times ("Home · 9 min") come with routing. */}
-        {SHORTCUTS.some((slot) => shortcuts[slot]) && (
+        {!label && SHORTCUTS.some((slot) => shortcuts[slot]) && (
           <View style={styles.chips}>
             {SHORTCUTS.filter((slot) => shortcuts[slot]).map((slot) => {
               const Icon = SHORTCUT_ICONS[slot];

@@ -1,7 +1,7 @@
 // Small map above the search results with a numbered pin per result.
 import { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Camera, GeoJSONSource, Layer, Map, NativeUserLocation } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map, NativeUserLocation } from '../map/components';
 import { mapStyle } from '../map/style';
 import { useTheme } from '../theme/useTheme';
 

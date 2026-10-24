@@ -109,6 +109,13 @@ export default function PlaceDetails() {
   const otherName = i18n.language === 'en' ? place.name_ms : place.name_en;
   const meta = [categoryLabel(place.category), formatDistance(place.distance_m)].filter(Boolean).join(' · ');
 
+  // Go: route preview; Leave by…: the same, starting with the arrival time picker
+  const planRoute = (mode) =>
+    router.push({
+      pathname: '/route',
+      params: { to_lat: place.location.lat, to_lng: place.location.lng, to_name: place.name, ...(mode && { mode }) },
+    });
+
   const toggleFavourite = () => {
     const saved = savedFromPlace(place, placeSubtitle(place));
     if (isFavourite) removeFavourite(saved.key);
@@ -147,8 +154,8 @@ export default function PlaceDetails() {
           </View>
 
           <View style={styles.actions}>
-            <Action Icon={IconNavigation} label={t('place.go')} primary disabled />
-            <Action Icon={IconClock} label={t('place.leaveBy')} disabled />
+            <Action Icon={IconNavigation} label={t('place.go')} primary onPress={() => planRoute()} />
+            <Action Icon={IconClock} label={t('place.leaveBy')} onPress={() => planRoute('leave_by')} />
             <Action
               Icon={isFavourite ? IconBookmarkFilled : IconBookmark}
               label={isFavourite ? t('place.saved') : t('place.save')}

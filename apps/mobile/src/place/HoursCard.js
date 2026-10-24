@@ -36,7 +36,8 @@ export function HoursCard({ hours }) {
   const names = t('days.long', { returnObjects: true });
   const short = t('days.short', { returnObjects: true });
 
-  if (!hours.some((day) => day.windows.length)) {
+  // The API sends null when no hours are recorded (most imported places): never guess
+  if (!hours?.some((day) => day.windows.length)) {
     return (
       <Card title={t('place.hours')}>
         <Text style={[type.body, { color: colors.inkMuted }]}>{t('place.status.hoursNotConfirmed')}</Text>

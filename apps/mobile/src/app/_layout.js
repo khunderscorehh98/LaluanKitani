@@ -50,6 +50,10 @@ export default function RootLayout() {
           <Stack.Screen name="reports/[id]" />
           <Stack.Screen name="pick-place/index" />
           <Stack.Screen name="pick-place/pin" />
+          <Stack.Screen name="settings" />
+          <Stack.Screen name="route" />
+          {/* No swipe-back while driving: End is the way out */}
+          <Stack.Screen name="navigate" options={{ gestureEnabled: false }} />
           {/* Bottom sheet over the map, which stays visible behind it */}
           <Stack.Screen
             name="report"

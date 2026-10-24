@@ -13,6 +13,8 @@ const schema = z
       .string()
       .default('')
       .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean)),
+    // GraphHopper (docker compose service "routing")
+    GRAPHHOPPER_URL: z.string().url().default('http://localhost:8989'),
     // Signs the app's sign-in tokens. At least 32 random characters in production.
     JWT_SECRET: z.preprocess(
       (value) => (value === '' ? undefined : value),

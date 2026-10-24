@@ -10,6 +10,7 @@ import { placesRouter } from './routes/places.js';
 import { mapLayersRouter } from './routes/map-layers.js';
 import { authRouter, meRouter } from './routes/auth.js';
 import { reportsRouter } from './routes/reports.js';
+import { routingRouter } from './routes/routing.js';
 
 export function createApp() {
   const app = express();
@@ -26,6 +27,7 @@ export function createApp() {
   app.use('/v1/places', placesRouter);
   app.use('/v1', mapLayersRouter);
   app.use('/v1/reports', reportsRouter);
+  app.use('/v1/route', routingRouter);
   app.use('/v1/auth', authRouter);
   app.use('/v1/me', meRouter);
 

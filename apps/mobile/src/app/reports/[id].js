@@ -5,9 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Camera, GeoJSONSource, Images, Layer, Map } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Images, Layer, Map } from '../../map/components';
 import IconX from '@tabler/icons-react-native/IconX';
 import { ApiError, apiGet, apiPost } from '../../api/client';
+import { Avatar, LevelBadge, TRUSTED_LEVEL } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 import { formatDistance, timeAgo } from '../../format';
 import { useOrigin } from '../../location';
@@ -47,14 +48,6 @@ function ReportMap({ report }) {
   );
 }
 
-const initials = (nickname) =>
-  nickname
-    .split('_')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join('');
-
 export default function ReportDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -88,6 +81,7 @@ export default function ReportDetails() {
       const res = await apiPost(`/v1/reports/${id}/votes`, { vote: value });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['place'] });
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       if (res.cleared) {
         showFlash(t('reportDetail.clearedThanks'));
         router.back();
@@ -163,10 +157,14 @@ export default function ReportDetails() {
 
           {report.reporter && (
             <View style={styles.reporter}>
-              <View style={[styles.avatar, { backgroundColor: colors.selected }]}>
-                <Text style={[styles.avatarText, { color: colors.tealText }]}>{initials(report.reporter.nickname)}</Text>
+              <Avatar nickname={report.reporter.nickname} />
+              <View style={styles.reporterText}>
+                <Text style={[type.body, styles.nickname, { color: colors.ink }]}>{report.reporter.nickname}</Text>
+                {/* Only trusted levels are shown publicly, as in the design */}
+                {report.reporter.level >= TRUSTED_LEVEL && (
+                  <LevelBadge level={report.reporter.level} levelKey={report.reporter.level_key} />
+                )}
               </View>
-              <Text style={[type.body, styles.nickname, { color: colors.ink }]}>{report.reporter.nickname}</Text>
             </View>
           )}
 
@@ -242,8 +240,7 @@ const styles = StyleSheet.create({
   headingText: { flex: 1 },
   description: { padding: space[3], borderRadius: radius.md },
   reporter: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  avatar: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontFamily: fonts.bold, fontSize: 14 },
+  reporterText: { gap: 2 },
   nickname: { fontFamily: fonts.bold },
   mine: { marginTop: space[3] },
   vote: { gap: space[2], marginTop: space[4] },

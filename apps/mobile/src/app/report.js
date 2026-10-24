@@ -76,6 +76,7 @@ export default function ReportSheet() {
       });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['place'] });
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       showFlash(t('report.thanks'));
       router.back();
     } catch (err) {

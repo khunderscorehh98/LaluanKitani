@@ -119,10 +119,10 @@ Admin data is entered from local knowledge and observation, never copied from Go
 
 ## Proof-of-concept milestones
 
-- [ ] Expo + MapLibre showing a Brunei PMTiles map
-- [ ] GraphHopper with Brunei OSM data and a custom model that avoids an area
+- [x] Expo + MapLibre showing a Brunei PMTiles map
+- [x] GraphHopper with Brunei OSM data and a custom model that avoids an area
 - [x] PostGIS schema for places, reports and Peak Spots
-- [ ] Node API connecting all three. Database endpoints are done; the map tiles and GraphHopper connection are still to come.
+- [x] Node API connecting all three: database, map layers and GraphHopper routing (`GET /v1/route`)
 
 ## Repository layout
 
@@ -135,10 +135,11 @@ assets/
   polaris/          Developer credit: Polaris Digital Solution logos
 infra/
   db/init/          One-off database setup for local Docker
+  routing/          GraphHopper image and config; data/brunei.osm.pbf is built locally (see infra/routing/README.md)
   tiles/            Nginx config for map tiles; data/brunei.pmtiles is built locally (see infra/tiles/README.md)
 tools/
   pmtiles/          pmtiles CLI used to build the tile file (git-ignored)
-docker-compose.yml  Local PostGIS (port 5433) and tile server (port 8080)
+docker-compose.yml  Local PostGIS (port 5433), tile server (port 8080) and GraphHopper routing (port 8989)
 ```
 
 ## Getting started
@@ -153,7 +154,7 @@ cp .env.example .env              # set PGPASSWORD to the same value
 npm install
 npm run db:migrate && npm run db:seed
 npm run dev                       # http://localhost:4000/health
-npm test                          # 70 tests against a separate test database
+npm test                          # 93 tests against a separate test database (routing ones need GraphHopper)
 ```
 
 ### Mobile app

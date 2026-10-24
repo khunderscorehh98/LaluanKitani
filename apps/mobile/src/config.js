@@ -1,9 +1,10 @@
 import Constants from 'expo-constants';
 
 /**
- * Server addresses. Override either one in apps/mobile/.env.local with
- * EXPO_PUBLIC_API_URL or EXPO_PUBLIC_TILES_URL. In development both default to
- * the computer running Metro, so a phone on the same Wi-Fi needs no setup.
+ * Server addresses. Override either one with EXPO_PUBLIC_API_URL or
+ * EXPO_PUBLIC_TILES_URL in apps/mobile/.env (see .env.example). In development
+ * both default to the computer running Metro, so a phone on the same Wi-Fi
+ * needs no setup. Empty values count as unset.
  */
 const devHost = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost';
 

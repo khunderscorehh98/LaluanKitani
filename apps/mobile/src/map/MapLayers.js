@@ -1,6 +1,6 @@
 // Laluan Kitani's own map layers: Peak Spot zones and live report badges.
 // Report colours are reserved for these layers (brand rule).
-import { GeoJSONSource, Images, Layer } from '@maplibre/maplibre-react-native';
+import { GeoJSONSource, Images, Layer } from './components';
 import { useTranslation } from 'react-i18next';
 import { PEAK_SPOT_BADGE, REPORT_BADGES } from '../reports';
 import { reportColors } from '../theme/tokens';
@@ -62,6 +62,8 @@ export function MapLayers({ reports, peakSpots, scheme, onReportPress }) {
         id="reports"
         data={reports}
         onPress={(event) => {
+          // Don't also count as a tap on the map (or a label under the badge)
+          event.stopPropagation?.();
           const id = event.nativeEvent.features[0]?.properties?.id;
           if (id) onReportPress?.(id);
         }}

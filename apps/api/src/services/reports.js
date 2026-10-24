@@ -1,6 +1,7 @@
 import { query } from '../db/pool.js';
 import { ApiError, notFound } from '../lib/errors.js';
 import { MAX_REPORTS_PER_HOUR, expiresAt, isConfirmed, routingEffect, shouldClear } from '../lib/reports.js';
+import { getDriverStats } from './me.js';
 
 // $1 = lat, $2 = lng of the point distances are measured from (may be NULL)
 const REPORT_COLUMNS = `
@@ -61,8 +62,14 @@ export async function getLiveReport(id, { lat = null, lng = null, viewerId = nul
   );
   const row = rows[0];
   if (!row) throw notFound('Report');
+  const report = toReport(row);
+  // The details page shows the reporter's level (e.g. the Trusted reporter badge)
+  if (report.reporter) {
+    const { level, key } = await getDriverStats(row.user_id);
+    report.reporter = { ...report.reporter, level, level_key: key };
+  }
   return {
-    ...toReport(row),
+    ...report,
     ...(viewerId && { mine: row.user_id === viewerId, my_vote: row.my_vote }),
   };
 }

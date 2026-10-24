@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { expiresAt, isConfirmed, routingEffect, shouldClear } from '../../src/lib/reports.js';
 import { codeMatches, generateCode, hashCode, signSessionToken, verifySessionToken } from '../../src/lib/auth.js';
+import { levelFor, pointsFor } from '../../src/lib/points.js';
 import { peakSpotActivity } from '../../src/lib/peak-spots.js';
 import { escapeLike, normalizeQuery, parseSimpang } from '../../src/lib/search-text.js';
 
@@ -34,6 +35,28 @@ describe('report clearing and expiry', () => {
     expect(expiresAt('careful', from)).toEqual(new Date('2026-10-26T09:00:00+08:00'));
     expect(expiresAt('flooded', from)).toBeNull();
     expect(expiresAt('closed', from)).toBeNull();
+  });
+});
+
+describe('points and levels', () => {
+  it('rewards confirmations more than votes', () => {
+    expect(pointsFor({ reports: 1 })).toBe(10);
+    expect(pointsFor({ reports: 1, confirmationsReceived: 2, votesCast: 3 })).toBe(10 + 10 + 6);
+  });
+
+  it('matches the design: 1,240 points is level 3 of 4, 760 to Community guide', () => {
+    expect(levelFor(1240)).toEqual({
+      level: 3,
+      key: 'trusted_reporter',
+      from: 1000,
+      of: 4,
+      next: { key: 'community_guide', at: 2000, points_to_go: 760 },
+    });
+  });
+
+  it('starts new drivers at level 1 and has no next level at the top', () => {
+    expect(levelFor(0)).toMatchObject({ level: 1, key: 'new_driver', next: { key: 'helper', points_to_go: 250 } });
+    expect(levelFor(5000)).toMatchObject({ level: 4, next: null });
   });
 });
 

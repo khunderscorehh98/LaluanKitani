@@ -39,7 +39,28 @@ services:
       - ./infra/tiles/data:/srv/tiles:ro
       - ./infra/tiles/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
-  # GraphHopper (routing) is added in the routing milestone, once the Brunei OSM extract is in place.
+  # GraphHopper routing engine (see infra/routing/README.md to get brunei.osm.pbf).
+  # Only the API talks to it, so it listens on this machine only.
+  # First start builds the graph into infra/routing/data/graph-cache (about a minute);
+  # delete that folder after updating brunei.osm.pbf to rebuild it.
+  # Built locally from the official GraphHopper release (infra/routing/Dockerfile)
+  routing:
+    build: ./infra/routing
+    image: laluankitani-routing:11.1
+    restart: unless-stopped
+    environment:
+      JAVA_OPTS: "-Xmx1g -Xms512m"
+    ports:
+      - "127.0.0.1:8989:8989"
+    volumes:
+      - ./infra/routing/data:/data
+      - ./infra/routing/config.yml:/config/config.yml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8989/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
 
 volumes:
   pgdata:
