@@ -1,15 +1,14 @@
 /**
- * Opens a saved place: our places open their details page; pinned points
- * (houses and other spots not in the database) are shown on the Map tab.
+ * Opens a saved place's page: our places open their details; pinned spots
+ * (houses, places from the map) open the same page for a spot.
  */
 export function openSaved(router, saved) {
   if (saved.placeId) {
     router.push(`/place/${saved.placeId}`);
   } else {
-    // `at` makes opening the same spot twice still move the map
-    router.navigate({
-      pathname: '/',
-      params: { lng: saved.location.lng, lat: saved.location.lat, at: Date.now() },
+    router.push({
+      pathname: '/spot',
+      params: { lat: saved.location.lat, lng: saved.location.lng, name: saved.name, category: saved.category ?? '' },
     });
   }
 }

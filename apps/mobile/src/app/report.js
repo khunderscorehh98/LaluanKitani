@@ -1,5 +1,6 @@
-// Report sheet: one tap on a label sends the report. A description can only
-// be typed while stopped, so nobody types while driving.
+// Report: drag the map so the pin sits on the spot, pick what's there, confirm.
+// While moving, the map stays on the driver's position (no dragging while
+// driving) and descriptions are locked; picking and confirming still work.
 import { useEffect, useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,9 +9,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import IconLock from '@tabler/icons-react-native/IconLock';
+import IconMapPinFilled from '@tabler/icons-react-native/IconMapPinFilled';
+import IconX from '@tabler/icons-react-native/IconX';
 import { ApiError, apiPost } from '../api/client';
+import { Button } from '../components/Button';
 import { TextField } from '../components/TextField';
-import { currentLngLat, inBrunei } from '../location';
+import { inBrunei } from '../location';
+import { Camera, Map } from '../map/components';
+import { DEFAULT_CENTER, mapStyle } from '../map/style';
 import { REPORT_BADGES } from '../reports';
 import { useFlash } from '../store/flash';
 import { isReady, useSession } from '../store/session';
@@ -18,65 +24,68 @@ import { useTheme } from '../theme/useTheme';
 import { fonts, radius, space, type } from '../theme/tokens';
 
 const LABELS = ['careful', 'jammed', 'danger', 'flooded', 'closed'];
-// Faster than walking pace counts as moving: no typing
+// Faster than walking pace counts as moving
 const MOVING_SPEED_MS = 2.8;
+const PIN_SIZE = 48;
+const BADGE_SIZE = 44;
 
-/** Where the report goes: the phone's position in Brunei, else the map centre it was opened from. */
-function useReportPoint(mapCenter) {
+/** Where the map starts: the phone in Brunei, else where the caller's map was. */
+function useStart(fallback) {
   const [permission] = Location.useForegroundPermissions();
-  const [point, setPoint] = useState({ lngLat: mapCenter, fromDevice: false, moving: false });
+  const [start, setStart] = useState({ lngLat: fallback, moving: false, ready: !permission?.granted });
 
   useEffect(() => {
-    if (!permission?.granted) return;
+    if (!permission) return;
+    if (!permission.granted) {
+      setStart((s) => ({ ...s, ready: true }));
+      return;
+    }
     Location.getLastKnownPositionAsync({ maxAge: 30_000 })
-      .then(async (last) => {
+      .then((last) => {
+        const here = last && [last.coords.longitude, last.coords.latitude];
         const moving = (last?.coords.speed ?? 0) > MOVING_SPEED_MS;
-        const lngLat = last ? [last.coords.longitude, last.coords.latitude] : await currentLngLat();
-        if (inBrunei(lngLat)) setPoint({ lngLat, fromDevice: true, moving });
-        else setPoint((p) => ({ ...p, moving }));
+        setStart(here && inBrunei(here) ? { lngLat: here, moving, ready: true } : { lngLat: fallback, moving: false, ready: true });
       })
-      .catch(() => {});
+      .catch(() => setStart((s) => ({ ...s, ready: true })));
   }, [permission?.granted]);
 
-  return point;
+  return start;
 }
 
-export default function ReportSheet() {
+export default function Report() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { scheme, colors } = useTheme();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const session = useSession();
   const showFlash = useFlash((state) => state.show);
-  const mapCenter = params.lng && params.lat ? [Number(params.lng), Number(params.lat)] : null;
-  const { lngLat, fromDevice, moving } = useReportPoint(mapCenter);
-  const [description, setDescription] = useState('');
-  const [sending, setSending] = useState(null);
-  const [error, setError] = useState(null);
 
-  const send = async (label) => {
+  const fallback = params.lng && params.lat ? [Number(params.lng), Number(params.lat)] : DEFAULT_CENTER;
+  const { lngLat: start, moving, ready } = useStart(fallback);
+  const [point, setPoint] = useState(null);
+  const [label, setLabel] = useState(null);
+  const [description, setDescription] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(null);
+  const spot = point ?? start;
+
+  const confirm = async () => {
     if (!isReady(session)) {
       router.push({ pathname: '/sign-in', params: { reason: 'report' } });
       return;
     }
-    if (!lngLat) {
-      setError(t('report.errors.noLocation'));
-      return;
-    }
-    setSending(label);
+    setSending(true);
     setError(null);
     try {
       await apiPost('/v1/reports', {
         label,
-        lng: lngLat[0],
-        lat: lngLat[1],
+        lng: spot[0],
+        lat: spot[1],
         description: moving ? undefined : description.trim() || undefined,
       });
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
-      queryClient.invalidateQueries({ queryKey: ['place'] });
-      queryClient.invalidateQueries({ queryKey: ['me'] });
+      ['reports', 'place', 'me'].forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
       showFlash(t('report.thanks'));
       router.back();
     } catch (err) {
@@ -89,54 +98,80 @@ export default function ReportSheet() {
             : t('map.offline'),
       );
     } finally {
-      setSending(null);
+      setSending(false);
     }
   };
 
   return (
-    <View style={styles.screen}>
-      <Pressable style={styles.backdrop} onPress={() => router.back()} accessibilityLabel={t('common.cancel')} />
-      {/* Android resizes the window for the keyboard itself; iOS needs the padding */}
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <View style={[styles.sheet, { backgroundColor: colors.surface, paddingBottom: insets.bottom + space[4] }]}>
-        <View style={[styles.handle, { backgroundColor: colors.hairline }]} />
-        <View style={styles.titleRow}>
-          <Text style={[type.h2, { color: colors.ink }]} accessibilityRole="header">
-            {t('report.title')}
+    <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View style={styles.mapArea}>
+        {ready && (
+          <Map
+            style={StyleSheet.absoluteFill}
+            mapStyle={mapStyle(scheme)}
+            logo={false}
+            compass={false}
+            attributionPosition={{ top: insets.top + space[2], right: space[2] }}
+            dragPan={!moving}
+            touchRotate={false}
+            touchPitch={false}
+            onRegionDidChange={(event) => setPoint(event.nativeEvent.center)}
+          >
+            <Camera initialViewState={{ center: start, zoom: 17 }} />
+          </Map>
+        )}
+
+        {/* The pin's tip marks the spot; once a problem is picked, its badge rides on top */}
+        <View pointerEvents="none" style={styles.pinWrap}>
+          {label ? (
+            <Image source={REPORT_BADGES[label]} style={styles.badge} />
+          ) : (
+            <IconMapPinFilled size={PIN_SIZE} color={colors.primary} />
+          )}
+          {label && <View style={[styles.tip, { backgroundColor: colors.ink }]} />}
+        </View>
+
+        <View style={[styles.hint, { top: insets.top + space[2], backgroundColor: colors.surfaceRaised }]}>
+          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel={t('common.cancel')} hitSlop={12}>
+            <IconX size={22} strokeWidth={2} color={colors.ink} />
+          </Pressable>
+          <Text style={[type.small, styles.hintText, { color: colors.ink }]}>
+            {moving ? t('report.hintMoving') : t('report.hintDrag')}
           </Text>
-          <Text style={[type.small, styles.tagline, { color: colors.ink }]}>{t('report.oneTap')}</Text>
         </View>
-        <Text style={[type.small, { color: colors.inkMuted }]}>
-          {fromDevice ? t('report.atYourLocation') : t('report.atMapCentre')}
+      </View>
+
+      <View style={[styles.sheet, { backgroundColor: colors.surface, paddingBottom: insets.bottom + space[3] }]}>
+        <Text style={[type.h3, { color: colors.ink }]} accessibilityRole="header">
+          {t('report.whatsThere')}
         </Text>
-
         <View style={styles.labels}>
-          {LABELS.map((label) => (
-            <Pressable
-              key={label}
-              onPress={() => send(label)}
-              disabled={Boolean(sending)}
-              accessibilityRole="button"
-              style={({ pressed }) => [
-                styles.label,
-                { backgroundColor: colors.surfaceRaised, borderColor: colors.hairline },
-                (pressed || sending === label) && { borderColor: colors.primary, backgroundColor: colors.selected },
-                sending && sending !== label && { opacity: 0.5 },
-              ]}
-            >
-              <Image source={REPORT_BADGES[label]} style={styles.badge} />
-              <Text style={[type.h3, { color: colors.ink }]}>{t(`reportLabels.${label}`)}</Text>
-            </Pressable>
-          ))}
+          {LABELS.map((option) => {
+            const active = option === label;
+            return (
+              <Pressable
+                key={option}
+                onPress={() => setLabel(option)}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: active }}
+                style={[
+                  styles.label,
+                  { backgroundColor: colors.surfaceRaised, borderColor: colors.hairline },
+                  active && { borderColor: colors.primary, backgroundColor: colors.selected },
+                ]}
+              >
+                <Image source={REPORT_BADGES[option]} style={styles.labelBadge} />
+                <Text style={[type.small, styles.labelText, { color: colors.ink }]}>{t(`reportLabels.${option}`)}</Text>
+              </Pressable>
+            );
+          })}
         </View>
-
-        {error ? <Text style={[type.small, styles.error, { color: colors.error }]}>{error}</Text> : null}
 
         <View style={styles.descriptionHeader}>
-          <Text style={[type.small, styles.descriptionLabel, { color: colors.ink }]}>{t('report.description')}</Text>
+          <Text style={[type.small, styles.bold, { color: colors.ink }]}>{t('report.description')}</Text>
           <View style={styles.lockNote}>
             <IconLock size={14} strokeWidth={2} color={colors.ink} />
-            <Text style={[type.small, styles.descriptionLabel, { color: colors.ink }]}>{t('report.whenStopped')}</Text>
+            <Text style={[type.small, styles.bold, { color: colors.ink }]}>{t('report.whenStopped')}</Text>
           </View>
         </View>
         <TextField
@@ -145,57 +180,70 @@ export default function ReportSheet() {
           placeholder={moving ? t('report.drivingNow') : t('report.descriptionPlaceholder')}
           editable={!moving && !sending}
           maxLength={140}
-          inputStyle={[styles.descriptionInput, { borderColor: colors.inkMuted }]}
         />
 
-        <Pressable
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.cancel, { backgroundColor: colors.hairline }, pressed && { opacity: 0.7 }]}
-        >
-          <Text style={[type.body, styles.cancelText, { color: colors.ink }]}>{t('common.cancel')}</Text>
-        </Pressable>
+        {error ? <Text style={[type.small, { color: colors.error }]}>{error}</Text> : null}
+        <Button
+          label={label ? t('report.confirm', { label: t(`reportLabels.${label}`) }) : t('report.pickFirst')}
+          onPress={confirm}
+          disabled={!label || sending}
+        />
       </View>
-      </KeyboardAvoidingView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
-  // The backdrop can't dim the map on Android (MapLibre draws on a native
-  // surface above normal views), so the sheet carries its own shadow
-  sheet: {
-    paddingHorizontal: space[4],
-    paddingTop: space[2],
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    elevation: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: -4 },
+  screen: { flex: 1 },
+  mapArea: { flex: 1 },
+  bold: { fontFamily: fonts.bold },
+  pinWrap: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    alignItems: 'center',
+    marginLeft: -PIN_SIZE / 2,
+    // Lift the pin so its tip, not its middle, sits on the centre
+    marginTop: -PIN_SIZE + 2,
+    width: PIN_SIZE,
   },
-  handle: { alignSelf: 'center', width: 40, height: 4, borderRadius: 2, marginBottom: space[3] },
-  titleRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  tagline: { fontFamily: fonts.bold },
-  labels: { gap: space[2], marginTop: space[3] },
-  label: {
+  badge: { width: BADGE_SIZE, height: BADGE_SIZE },
+  tip: { width: 3, height: PIN_SIZE - BADGE_SIZE + 2, borderRadius: 2 },
+  hint: {
+    position: 'absolute',
+    left: space[4],
+    right: space[12],
     flexDirection: 'row',
     alignItems: 'center',
-    gap: space[4],
-    minHeight: 64,
+    gap: space[3],
+    padding: space[3],
+    borderRadius: radius.md,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  hintText: { flex: 1, fontFamily: fonts.bold },
+  sheet: {
+    gap: space[3],
     paddingHorizontal: space[4],
+    paddingTop: space[4],
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    marginTop: -radius.lg,
+  },
+  labels: { flexDirection: 'row', gap: space[1] },
+  label: {
+    flex: 1,
+    alignItems: 'center',
+    gap: space[1],
+    paddingVertical: space[3],
     borderWidth: 1.5,
     borderRadius: radius.md,
   },
-  badge: { width: 40, height: 40 },
-  error: { marginTop: space[2] },
-  descriptionHeader: { flexDirection: 'row', justifyContent: 'space-between', marginTop: space[4], marginBottom: space[2] },
-  descriptionLabel: { fontFamily: fonts.bold },
+  labelBadge: { width: 36, height: 36 },
+  labelText: { fontFamily: fonts.bold, fontSize: 12 },
+  descriptionHeader: { flexDirection: 'row', justifyContent: 'space-between' },
   lockNote: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
-  descriptionInput: { borderStyle: 'dashed' },
-  cancel: { marginTop: space[3], height: 52, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
-  cancelText: { fontFamily: fonts.bold },
 });

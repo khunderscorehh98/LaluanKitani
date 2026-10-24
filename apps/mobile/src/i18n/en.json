@@ -195,9 +195,6 @@
   },
   "report": {
     "title": "Report",
-    "oneTap": "One tap. Then drive.",
-    "atYourLocation": "At your location",
-    "atMapCentre": "At the centre of the map",
     "description": "Description (optional)",
     "whenStopped": "Available when stopped",
     "descriptionPlaceholder": "Add a short note when you're parked",
@@ -207,7 +204,12 @@
       "noLocation": "We don't know where you are yet. Move the map to the spot and try again.",
       "tooMany": "You've sent a lot of reports. Try again in a little while.",
       "outsideBrunei": "Reports can only be made in Brunei."
-    }
+    },
+    "hintDrag": "Move the map so the pin is on the spot",
+    "hintMoving": "You are driving: the report goes where you are",
+    "whatsThere": "What is there?",
+    "confirm": "Report {{label}} here",
+    "pickFirst": "Pick what is there"
   },
   "reportDetail": {
     "reported": "Reported {{ago}}",
@@ -314,12 +316,6 @@
     "deleteFailed": "Couldn't delete the account",
     "mapCredit": "Map data © OpenStreetMap contributors"
   },
-  "labelCard": {
-    "checking": "Checking our places…",
-    "fromMap": "from the map",
-    "setAs": "Set as…",
-    "setAsTitle": "Save as a shortcut"
-  },
   "route": {
     "minutes_one": "{{count}} min",
     "minutes_other": "{{count}} min",
@@ -408,5 +404,9 @@
       "avoided_other": "Drivers' reports kept you away from {{count}} closed or flooded roads today.",
       "done": "Done"
     }
+  },
+  "spot": {
+    "unnamed": "Pinned spot",
+    "notice": "From the map. This place isn't in Laluan Kitani yet, so its opening hours and local names aren't known."
   }
 }

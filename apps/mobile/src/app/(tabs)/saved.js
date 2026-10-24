@@ -3,23 +3,38 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import IconNavigation from '@tabler/icons-react-native/IconNavigation';
 import IconPencil from '@tabler/icons-react-native/IconPencil';
 import IconPlus from '@tabler/icons-react-native/IconPlus';
 import IconStar from '@tabler/icons-react-native/IconStar';
 import { ListRow } from '../../components/ListRow';
 import { SectionHeader } from '../../components/SectionHeader';
+import { planRoute } from '../../route/planRoute';
 import { openSaved } from '../../saved/openSaved';
 import { SHORTCUT_ICONS } from '../../saved/shortcutIcons';
 import { SHORTCUTS, useSavedPlaces } from '../../store/savedPlaces';
 import { useTheme } from '../../theme/useTheme';
 import { fonts, radius, space, type } from '../../theme/tokens';
 
-function EditButton({ label, onPress }) {
+/** Go (straight to the route preview) and edit, at the end of each saved place's row. */
+function RowActions({ onGo, onEdit }) {
+  const { t } = useTranslation();
   const { colors } = useTheme();
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} hitSlop={12} style={styles.edit}>
-      <IconPencil size={20} strokeWidth={2} color={colors.ink} />
-    </Pressable>
+    <View style={styles.rowActions}>
+      <Pressable
+        onPress={onGo}
+        accessibilityRole="button"
+        accessibilityLabel={t('place.go')}
+        hitSlop={6}
+        style={({ pressed }) => [styles.go, { backgroundColor: colors.primary }, pressed && { opacity: 0.7 }]}
+      >
+        <IconNavigation size={20} strokeWidth={2} color={colors.onPrimary} />
+      </Pressable>
+      <Pressable onPress={onEdit} accessibilityRole="button" accessibilityLabel={t('saved.edit')} hitSlop={12} style={styles.edit}>
+        <IconPencil size={20} strokeWidth={2} color={colors.ink} />
+      </Pressable>
+    </View>
   );
 }
 
@@ -34,18 +49,29 @@ export default function SavedTab() {
 
   const pick = (slot) => router.push({ pathname: '/pick-place', params: { slot } });
 
+  const goTo = (saved, mode) => planRoute(router, { ...saved.location, name: saved.name }, mode);
+  const leaveBy = (saved) => ({ text: t('place.leaveBy'), onPress: () => goTo(saved, 'leave_by') });
+
+  // Android shows at most 3 buttons, so these close by tapping outside instead of Cancel
   const editShortcut = (slot) =>
-    Alert.alert(t(`saved.slots.${slot}`), shortcuts[slot].name, [
-      { text: t('common.cancel'), style: 'cancel' },
-      { text: t('saved.remove'), style: 'destructive', onPress: () => removeShortcut(slot) },
-      { text: t('saved.change'), onPress: () => pick(slot) },
-    ]);
+    Alert.alert(
+      t(`saved.slots.${slot}`),
+      shortcuts[slot].name,
+      [
+        leaveBy(shortcuts[slot]),
+        { text: t('saved.change'), onPress: () => pick(slot) },
+        { text: t('saved.remove'), style: 'destructive', onPress: () => removeShortcut(slot) },
+      ],
+      { cancelable: true },
+    );
 
   const editFavourite = (saved) =>
-    Alert.alert(saved.name, null, [
-      { text: t('common.cancel'), style: 'cancel' },
-      { text: t('saved.remove'), style: 'destructive', onPress: () => removeFavourite(saved.key) },
-    ]);
+    Alert.alert(
+      saved.name,
+      null,
+      [leaveBy(saved), { text: t('saved.remove'), style: 'destructive', onPress: () => removeFavourite(saved.key) }],
+      { cancelable: true },
+    );
 
   return (
     <SafeAreaView style={[styles.screen, { backgroundColor: colors.surface }]} edges={['top']}>
@@ -76,7 +102,7 @@ export default function SavedTab() {
               title={t(`saved.slots.${slot}`)}
               subtitle={saved ? [saved.name, saved.detail].filter(Boolean).join(' · ') : t('saved.tapToSet')}
               onPress={() => (saved ? openSaved(router, saved) : pick(slot))}
-              trailing={saved && <EditButton label={t('saved.edit')} onPress={() => editShortcut(slot)} />}
+              trailing={saved && <RowActions onGo={() => goTo(saved)} onEdit={() => editShortcut(slot)} />}
             />
           );
         })}
@@ -92,7 +118,7 @@ export default function SavedTab() {
             title={saved.name}
             subtitle={saved.detail}
             onPress={() => openSaved(router, saved)}
-            trailing={<EditButton label={t('saved.edit')} onPress={() => editFavourite(saved)} />}
+            trailing={<RowActions onGo={() => goTo(saved)} onEdit={() => editFavourite(saved)} />}
           />
         ))}
         {favourites.length === 0 && (
@@ -129,6 +155,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   addLabel: { fontFamily: fonts.bold, fontSize: 16 },
+  rowActions: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  go: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   edit: { padding: space[1] },
   empty: { paddingHorizontal: space[4], paddingVertical: space[3] },
   note: { margin: space[4], padding: space[4], borderRadius: radius.md },

@@ -2,21 +2,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
-import { Camera, GeoJSONSource, Layer, Map, NativeUserLocation } from '../../map/components';
+import { Camera, Map, NativeUserLocation } from '../../map/components';
 import IconCircleCheck from '@tabler/icons-react-native/IconCircleCheck';
 import IconCurrentLocation from '@tabler/icons-react-native/IconCurrentLocation';
 import IconPlus from '@tabler/icons-react-native/IconPlus';
 import IconSearch from '@tabler/icons-react-native/IconSearch';
 import IconWifiOff from '@tabler/icons-react-native/IconWifiOff';
 import { BRUNEI_BOUNDS, currentLngLat, inBrunei } from '../../location';
-import { LabelCard } from '../../map/LabelCard';
 import { labelAt, placeForLabel } from '../../map/labels';
 import { MapLayers } from '../../map/MapLayers';
 import { DEFAULT_CENTER, mapStyle } from '../../map/style';
 import { useMapLayers } from '../../map/useMapLayers';
+import { planRoute } from '../../route/planRoute';
 import { SHORTCUT_ICONS } from '../../saved/shortcutIcons';
 import { useFlash } from '../../store/flash';
 import { SHORTCUTS, useSavedPlaces } from '../../store/savedPlaces';
@@ -35,7 +35,6 @@ export default function MapTab() {
   const [permission, requestPermission] = Location.useForegroundPermissions();
   const { reports, peakSpots, error } = useMapLayers(center);
   const shortcuts = useSavedPlaces((state) => state.shortcuts);
-  const [focus, setFocus] = useState(null);
 
   // One-off messages such as "Thanks for the report", shown for a few seconds
   const flash = useFlash((state) => state.message);
@@ -46,42 +45,23 @@ export default function MapTab() {
     return () => clearTimeout(timer);
   }, [flash, clearFlash]);
 
-  const showOnMap = (lngLat) => {
-    setFocus(lngLat);
-    camera.current?.flyTo({ center: lngLat, zoom: STREET_ZOOM, duration: 800 });
-  };
-
-  // Tapping a map label: our place's details if we have it, else the label's own card
+  // Tapping a label on the map opens its place page: full details when the
+  // place is in our database, otherwise the same page with what the map knows
   const map = useRef(null);
-  const [label, setLabel] = useState(null);
   const latestTap = useRef(0);
   const onMapPress = async (event) => {
     const tap = (latestTap.current += 1);
-    const found = await labelAt(map, event).catch(() => null);
-    if (tap !== latestTap.current) return;
-    setLabel(found && { ...found, checking: true });
-    if (!found) return;
-    setFocus(found.lngLat);
-    const place = await placeForLabel(found, i18n.language).catch(() => null);
+    const label = await labelAt(map, event).catch(() => null);
+    if (!label || tap !== latestTap.current) return;
+    const place = await placeForLabel(label, i18n.language).catch(() => null);
     if (tap !== latestTap.current) return;
     if (place) {
-      setLabel(null);
       router.push(`/place/${place.id}`);
     } else {
-      setLabel({ ...found, checking: false });
+      const [lng, lat] = label.lngLat;
+      router.push({ pathname: '/spot', params: { lat, lng, name: label.name, category: label.kind ?? '' } });
     }
   };
-  const closeLabel = () => {
-    latestTap.current += 1;
-    setLabel(null);
-    setFocus(null);
-  };
-
-  // Opened from Saved with a pinned spot: /?lng=..&lat=..
-  const params = useLocalSearchParams();
-  useEffect(() => {
-    if (params.lng && params.lat) showOnMap([Number(params.lng), Number(params.lat)]);
-  }, [params.lng, params.lat, params.at]);
 
   // Once location is allowed, open on the driver (only when they are in Brunei)
   useEffect(() => {
@@ -131,23 +111,6 @@ export default function MapTab() {
           scheme={scheme}
           onReportPress={(id) => router.push(`/reports/${id}`)}
         />
-        {focus && (
-          <GeoJSONSource
-            id="focus"
-            data={{ type: 'Feature', geometry: { type: 'Point', coordinates: focus }, properties: {} }}
-          >
-            <Layer
-              id="focus-pin"
-              type="circle"
-              paint={{
-                'circle-radius': 11,
-                'circle-color': colors.primary,
-                'circle-stroke-color': '#FFFFFF',
-                'circle-stroke-width': 3,
-              }}
-            />
-          </GeoJSONSource>
-        )}
         {permission?.granted && <NativeUserLocation />}
       </Map>
 
@@ -175,18 +138,16 @@ export default function MapTab() {
           <IconCurrentLocation size={26} strokeWidth={2} color={colors.tealText} />
         </Pressable>
 
-        {label && <LabelCard label={label} onClose={closeLabel} />}
-
         {/* Saved shortcuts. Drive times ("Home · 9 min") come with routing. */}
-        {!label && SHORTCUTS.some((slot) => shortcuts[slot]) && (
+        {SHORTCUTS.some((slot) => shortcuts[slot]) && (
           <View style={styles.chips}>
             {SHORTCUTS.filter((slot) => shortcuts[slot]).map((slot) => {
               const Icon = SHORTCUT_ICONS[slot];
-              const { lng, lat } = shortcuts[slot].location;
               return (
                 <Pressable
                   key={slot}
-                  onPress={() => showOnMap([lng, lat])}
+                  // Tapping Home means "take me home": straight to the route preview
+                  onPress={() => planRoute(router, { ...shortcuts[slot].location, name: t(`saved.slots.${slot}`) })}
                   accessibilityRole="button"
                   style={[styles.chip, raised]}
                 >

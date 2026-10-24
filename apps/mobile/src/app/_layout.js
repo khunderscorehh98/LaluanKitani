@@ -47,6 +47,7 @@ export default function RootLayout() {
           {/* Every screen draws its own header */}
           <Stack.Screen name="search" />
           <Stack.Screen name="place/[id]" />
+          <Stack.Screen name="spot" />
           <Stack.Screen name="reports/[id]" />
           <Stack.Screen name="pick-place/index" />
           <Stack.Screen name="pick-place/pin" />
@@ -54,15 +55,7 @@ export default function RootLayout() {
           <Stack.Screen name="route" />
           {/* No swipe-back while driving: End is the way out */}
           <Stack.Screen name="navigate" options={{ gestureEnabled: false }} />
-          {/* Bottom sheet over the map, which stays visible behind it */}
-          <Stack.Screen
-            name="report"
-            options={{
-              presentation: 'transparentModal',
-              animation: 'slide_from_bottom',
-              contentStyle: { backgroundColor: 'transparent' },
-            }}
-          />
+          <Stack.Screen name="report" options={{ animation: 'slide_from_bottom' }} />
           <Stack.Screen name="sign-in" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         </Stack.Protected>
       </Stack>

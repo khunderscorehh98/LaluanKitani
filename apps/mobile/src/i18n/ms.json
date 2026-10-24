@@ -192,9 +192,6 @@
   },
   "report": {
     "title": "Lapor",
-    "oneTap": "Satu ketik. Terus memandu.",
-    "atYourLocation": "Di lokasi anda",
-    "atMapCentre": "Di tengah peta",
     "description": "Keterangan (pilihan)",
     "whenStopped": "Hanya semasa berhenti",
     "descriptionPlaceholder": "Tambah nota ringkas semasa berhenti",
@@ -204,7 +201,12 @@
       "noLocation": "Lokasi anda belum diketahui. Gerakkan peta ke tempat itu dan cuba lagi.",
       "tooMany": "Anda telah menghantar banyak laporan. Cuba lagi sebentar lagi.",
       "outsideBrunei": "Laporan hanya boleh dibuat di Brunei."
-    }
+    },
+    "hintDrag": "Gerakkan peta supaya pin berada di tempat itu",
+    "hintMoving": "Anda sedang memandu: laporan dibuat di lokasi anda",
+    "whatsThere": "Apa yang ada di situ?",
+    "confirm": "Laporkan {{label}} di sini",
+    "pickFirst": "Pilih apa yang ada di situ"
   },
   "reportDetail": {
     "reported": "Dilaporkan {{ago}}",
@@ -307,12 +309,6 @@
     "deleteFailed": "Akaun tidak dapat dipadam",
     "mapCredit": "Data peta © penyumbang OpenStreetMap"
   },
-  "labelCard": {
-    "checking": "Menyemak tempat kami…",
-    "fromMap": "dari peta",
-    "setAs": "Tetapkan…",
-    "setAsTitle": "Simpan sebagai pintasan"
-  },
   "route": {
     "minutes": "{{count}} min",
     "via": "melalui {{road}}",
@@ -398,5 +394,9 @@
       "avoided": "Laporan pemandu menjauhkan anda dari {{count}} jalan yang ditutup atau banjir hari ini.",
       "done": "Selesai"
     }
+  },
+  "spot": {
+    "unnamed": "Tempat dipin",
+    "notice": "Dari peta. Tempat ini belum ada dalam Laluan Kitani, jadi waktu buka dan nama tempatannya belum diketahui."
   }
 }
